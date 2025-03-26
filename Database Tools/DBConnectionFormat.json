@@ -1,0 +1,4 @@
+{
+  "DBConnectionStringWindowAuth": "data source={0}; initial catalog={1}; trusted_connection=true; encrypt=false",
+  "DBConnectionStringServerAuth": "data source={0}; initial catalog={1}; user id={2}; password={3};encrypt=false"
+}
