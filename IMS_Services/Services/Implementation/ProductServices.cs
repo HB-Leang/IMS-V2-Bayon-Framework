@@ -117,13 +117,12 @@ public class ProductServices : ICRUDServices<Product, int>
 
         }
     }
-    
-    public static Product GetLowStockProducts()
+
+    public static IEnumerable<Product> GetLowStockProducts()
     {
-        string query = "SELECT * FROM tbProduct";
+        string query = "SELECT * FROM tbProduct WHERE TotalStock < 5;";
         using (SqlCommand cmd = new SqlCommand(query, connection))
         {
-
             SqlDataReader? reader = null;
             try
             {
@@ -131,21 +130,43 @@ public class ProductServices : ICRUDServices<Product, int>
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error in getting staff with ID, {id} > {ex.Message}");
+                throw new Exception($"Error in getting products with low stock > {ex.Message}");
             }
 
-            Product? result = null;
+            //Product? result = null;
+            //if (reader != null && reader.HasRows == true)
+            //{
+            //    if (reader.Read() == true)
+            //    {
+            //        result = reader.ToProduct();
+            //        result = new Product()
+            //        {
+            //            ID = reader.GetInt32("ProductID"),
+            //            Name = reader.GetString("ProductName"),
+            //            TotalStock = reader.GetInt16("TotalStock"),
+            //        };
+            //    }
+            //}
+
+            //reader?.Close();
+            //return result;
+
             if (reader != null && reader.HasRows == true)
             {
-                if (reader.Read() == true)
+                var queryable = reader.Cast<IDataRecord>().AsQueryable();
+                foreach (var record in queryable)
                 {
-                    result = reader.ToProduct();
+                    yield return new Product()
+                    {
+                        ID = reader.GetInt32("ProductID"),
+                        Name = reader.GetString("ProductName"),
+                        TotalStock = reader.GetInt16("TotalStock"),
+                    };
                 }
             }
-
             reader?.Close();
-            return result;
         }
+    }
 
     public static IEnumerable<Product> GetByName(string name)
     {

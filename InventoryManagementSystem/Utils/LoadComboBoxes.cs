@@ -4,17 +4,20 @@ using IMS_Services.Manager;
 using IMS_Services.Entities;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using BayonFramework.Database.Driver;
+using BayonFramework.Database;
 
 namespace InventoryManagementSystem.Utils;
 
 public class LoadComboBoxes
 {
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
     public static void LoadCategoryCBO(ComboBox comboBox)
     {
         string query = "SELECT CategoryID, CategoryName FROM tbCategory";
         List<Category> list = new List<Category>();
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
@@ -51,7 +54,7 @@ public class LoadComboBoxes
     {
         string query = "SELECT StaffID, StaffName FROM tbStaff";
         List<Staff> list = new List<Staff>();
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
@@ -84,7 +87,7 @@ public class LoadComboBoxes
     {
         string query = "SELECT SupplierID, SupplierName FROM tbSupplier";
         List<Supplier> list = new List<Supplier>();
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
@@ -117,7 +120,7 @@ public class LoadComboBoxes
     {
         string query = "SELECT ProductID, ProductName, SalePrice FROM tbProduct";
         List<Product> list = new List<Product>();
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
@@ -148,7 +151,7 @@ public class LoadComboBoxes
     public static void LoadImportID(ComboBox comboBox)
     {
         string query = "SELECT ImportID FROM tbImport ORDER BY ImportID DESC";
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
@@ -173,7 +176,7 @@ public class LoadComboBoxes
     public static void LoadExportID(ComboBox comboBox)
     {
         string query = "SELECT ExportID FROM tbExport ORDER BY ExportID DESC";
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
@@ -201,7 +204,7 @@ public class LoadComboBoxes
         string query = @"SELECT InvID, CurrentStock FROM tbInventory 
                     WHERE ProductID = @proID AND CurrentStock > 0 AND ExpirationDate > GETDATE()
                     ORDER BY CurrentStock DESC";
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@proID", proID);
             using (SqlDataReader reader = cmd.ExecuteReader())

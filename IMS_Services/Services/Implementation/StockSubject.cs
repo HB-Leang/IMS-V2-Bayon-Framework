@@ -9,7 +9,6 @@ namespace IMS_Services.Services.Implementation;
 
 public class StockSubject
 {
-    public event EventHandler<Product>? StockLow;
     private List<IStockObserver> observers = new List<IStockObserver>();
 
     public void Attach(IStockObserver observer)
@@ -22,11 +21,27 @@ public class StockSubject
         observers.Remove(observer);
     }
 
-    public void NotifyObserver(string totalStock)
+    public void CheckStockLevels()
+    {
+        var products = ProductServices.GetLowStockProducts();
+        if(products == null || products.Count() == 0)
+        {
+            return;
+        }
+
+        string lowStockMessage = "The following products are low on stock:\n\n";
+        foreach (var product in products)
+        {
+            lowStockMessage += $"{product.Name}: {product.TotalStock} units remaining\n";
+        }
+        NotifyObserver(lowStockMessage);
+    }
+
+    public void NotifyObserver(string message)
     {
         foreach (var observer in observers)
         {
-            observer.OnLowStock(totalStock);
+            observer.OnLowStock(message);
         }
     }
 }

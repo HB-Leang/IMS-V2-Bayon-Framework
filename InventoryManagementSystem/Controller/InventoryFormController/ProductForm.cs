@@ -1,4 +1,5 @@
 ﻿using IMS_Services.Entities;
+using IMS_Services.Services;
 using IMS_Services.Services.Implementation;
 using InventoryManagementSystem.Controller.ImportExportFormController.SubImportExportForm;
 using InventoryManagementSystem.Controller.InventoryFormController.InventorySubForm;
@@ -6,21 +7,22 @@ using InventoryManagementSystem.Controller.InventoryFormController.InventorySubF
 
 namespace InventoryManagementSystem.Controller
 {
-    public partial class ProductForm : Form
+    public partial class ProductForm : Form, IStockObserver
     {
         private static ProductForm? instance = null;
+        private StockSubject stockSubject = new();
         public ProductForm()
         {
             InitializeComponent();
             LoadData();
-
+            
             btnAdd.Click += DoClickAddProduct;
             btnUpdate.Click += DoClickUpdateProduct;
             btnDelete.Click += DoClickDeleteProduct;
             
             dgvProduct.Click += DoClickDataGridView;
             txtSearch.TextChanged += DoSearchTextChange;
-
+            stockSubject.Attach(this);
             this.Load += DoOnFormLoad;
 
             instance = this;
@@ -31,9 +33,10 @@ namespace InventoryManagementSystem.Controller
             //}
         }
 
+
         private void DoOnFormLoad(object? sender, EventArgs e)
         {
-            
+            stockSubject.CheckStockLevels();
         }
 
         private void DoSearchTextChange(object? sender, EventArgs e)
@@ -147,6 +150,11 @@ namespace InventoryManagementSystem.Controller
         private void AddToView(Product product)
         {
             dgvProduct.Rows.Add(product.ID, product.Barcode, product.Name, product.SalePrice, product.UOM, product.TotalStock, product.CategoryID);
+        }
+
+        public void OnLowStock(string message)
+        {
+            MessageBox.Show(message, "Low Stock Alert", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         #endregion
