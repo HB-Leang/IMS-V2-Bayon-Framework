@@ -20,12 +20,20 @@ namespace InventoryManagementSystem.Controller
             
             dgvProduct.Click += DoClickDataGridView;
             txtSearch.TextChanged += DoSearchTextChange;
+
+            this.Load += DoOnFormLoad;
+
             instance = this;
             //UpdateExportDetail updateExportDetail = UpdateExportDetail.GetInstance();
             //if (updateExportDetail != null)
             //{
             //    updateExportDetail.ExportModified += (sender) => LoadData();
             //}
+        }
+
+        private void DoOnFormLoad(object? sender, EventArgs e)
+        {
+            
         }
 
         private void DoSearchTextChange(object? sender, EventArgs e)

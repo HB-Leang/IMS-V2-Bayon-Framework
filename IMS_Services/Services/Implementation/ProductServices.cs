@@ -9,6 +9,7 @@ public class ProductServices : ICRUDServices<Product, int>
 {
 
     private static DatabaseConnection connection = DatabaseConnection.Instance;
+
     public static int Add(Product product)
     {
         string query = @"
@@ -115,6 +116,35 @@ public class ProductServices : ICRUDServices<Product, int>
 
         }
     }
+    
+    public static Product GetLowStockProducts()
+    {
+        string query = "SELECT * FROM tbProduct";
+        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        {
+
+            SqlDataReader? reader = null;
+            try
+            {
+                reader = cmd.ExecuteReader();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error in getting staff with ID, {id} > {ex.Message}");
+            }
+
+            Product? result = null;
+            if (reader != null && reader.HasRows == true)
+            {
+                if (reader.Read() == true)
+                {
+                    result = reader.ToProduct();
+                }
+            }
+
+            reader?.Close();
+            return result;
+        }
 
     public static IEnumerable<Product> GetByName(string name)
     {
@@ -183,4 +213,7 @@ public class ProductServices : ICRUDServices<Product, int>
 
         }
     }
+
+   
+    
 }

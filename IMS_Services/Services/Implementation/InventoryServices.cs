@@ -28,7 +28,8 @@ public class InventoryServices
     public const string INV_COL_LAST_UPDATE = "LastUpdate";
     public const string INV_COL_PRO_ID = "ProductID";
     public const string INV_COL_IMP_ID = "ImportID";
-    
+
+
     public static DataRow AddRow(DataTable table, Inventory inv)
     {
         var row = table.NewRow();
@@ -204,4 +205,6 @@ public class InventoryServices
 
         }
     }
+
+ 
 }
