@@ -2,11 +2,11 @@
 
 public class Validator
 {
-    public static void isNullOrEmpty(string? data)
+    public static void isNullOrEmpty(string Key,string? data)
     {
         if (string.IsNullOrEmpty(data))
         {
-            throw new Exception($"{data} must be not null or empty");
+            throw new Exception($"{Key} must be not null or empty");
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using IMS_Services.Entities;
+﻿using BayonFramework.Database.Driver;
+using BayonFramework.Database;
+using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -9,7 +11,8 @@ namespace IMS_Services.Services.Implementation;
 public class StaffServices : ICRUDServices<Staff, short>
 {
 
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
 
 
     public static short Add(Staff staff)
@@ -19,7 +22,7 @@ public class StaffServices : ICRUDServices<Staff, short>
         (@StaffName, @Gender, @BirthDate, @StaffPosition, @Address, @WorkNumber, @PersonalNumber, @HiredDate, @Salary, @StoppedWork);
         ";
 
-            using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+            using (SqlCommand cmd = new SqlCommand(query, connection))
             {
                 cmd.Parameters.AddWithValue("@StaffName", staff.StaffName);
                 cmd.Parameters.AddWithValue("@Gender", staff.Gender);
@@ -50,7 +53,7 @@ public class StaffServices : ICRUDServices<Staff, short>
     {
         string query = "DELETE FROM tbStaff WHERE StaffID = @id";
         
-            using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+            using (SqlCommand cmd = new SqlCommand(query, connection))
             {
                 cmd.Parameters.AddWithValue("@id", id);
 
@@ -72,7 +75,7 @@ public class StaffServices : ICRUDServices<Staff, short>
     {
         string query = "SELECT * FROM tbStaff;";
         
-            using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+            using (SqlCommand cmd = new SqlCommand(query, connection))
             {
                 SqlDataReader? reader = null;
                 try
@@ -100,7 +103,7 @@ public class StaffServices : ICRUDServices<Staff, short>
     public static Staff GetById(short id)
     {
         string query = "SELECT * FROM tbStaff WHERE StaffID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -132,7 +135,7 @@ public class StaffServices : ICRUDServices<Staff, short>
     {
         string query = "SELECT * FROM tbStaff WHERE StaffName LIKE '%" + name + "%'";
         
-            using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+            using (SqlCommand cmd = new SqlCommand(query, connection))
             {
                 SqlDataReader? reader = null;
                 try
@@ -175,7 +178,7 @@ public class StaffServices : ICRUDServices<Staff, short>
             StaffID = @id;";
 
         
-            using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+            using (SqlCommand cmd = new SqlCommand(query, connection))
             {
                 cmd.Parameters.AddWithValue("@name", staff.StaffName);
                 cmd.Parameters.AddWithValue("@g", staff.Gender);

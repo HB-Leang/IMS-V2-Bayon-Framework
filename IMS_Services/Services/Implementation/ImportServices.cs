@@ -1,4 +1,6 @@
-﻿using IMS_Services.Entities;
+﻿using BayonFramework.Database.Driver;
+using BayonFramework.Database;
+using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System;
@@ -13,7 +15,8 @@ namespace IMS_Services.Services.Implementation;
 public class ImportServices : ICRUDServices<Import, int>
 {
 
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
 
     public static int Add(Import entity)
     {
@@ -21,7 +24,7 @@ public class ImportServices : ICRUDServices<Import, int>
         INSERT INTO tbImport VALUES 
         (@d, @tc, @ti, @h, @s);";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@d", entity.ImportDate);
             cmd.Parameters.AddWithValue("@tc", entity.TotalCost);
@@ -45,7 +48,7 @@ public class ImportServices : ICRUDServices<Import, int>
     {
         string query = "DELETE FROM tbImport WHERE ImportID = @id;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@id", id);
             try
@@ -64,7 +67,7 @@ public class ImportServices : ICRUDServices<Import, int>
     {
         string query = "SELECT * FROM tbImport;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -92,7 +95,7 @@ public class ImportServices : ICRUDServices<Import, int>
     public static Import GetById(int id)
     {
         string query = "SELECT * FROM tbImport WHERE ImportID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -139,7 +142,7 @@ public class ImportServices : ICRUDServices<Import, int>
             ImportID = @id;";
 
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@d", entity.ImportDate);
             cmd.Parameters.AddWithValue("@tc", entity.TotalCost);

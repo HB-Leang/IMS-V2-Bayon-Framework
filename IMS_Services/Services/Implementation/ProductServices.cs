@@ -1,4 +1,6 @@
-﻿using IMS_Services.Entities;
+﻿using BayonFramework.Database.Driver;
+using BayonFramework.Database;
+using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -7,15 +9,15 @@ namespace IMS_Services.Services.Implementation;
 
 public class ProductServices : ICRUDServices<Product, int>
 {
-
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
     public static int Add(Product product)
     {
         string query = @"
         INSERT INTO tbProduct VALUES 
         (@name, @barcode, @salePrice, @uom, @ts, @cateID);";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@name", product.Name);
             cmd.Parameters.AddWithValue("@barcode", product.Barcode);
@@ -41,7 +43,7 @@ public class ProductServices : ICRUDServices<Product, int>
     {
         string query = "DELETE FROM tbProduct WHERE ProductID = @id;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@id", id);
             try
@@ -60,7 +62,7 @@ public class ProductServices : ICRUDServices<Product, int>
     {
         string query = "SELECT * FROM tbProduct";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -88,7 +90,7 @@ public class ProductServices : ICRUDServices<Product, int>
     public static Product GetById(int id)
     {
         string query = "SELECT * FROM tbProduct WHERE ProductID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -120,7 +122,7 @@ public class ProductServices : ICRUDServices<Product, int>
     {
         string query = "SELECT * FROM tbProduct WHERE ProductName LIKE '%" + name + "%'";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -159,7 +161,7 @@ public class ProductServices : ICRUDServices<Product, int>
             ProductID = @id;";
 
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@name", product.Name);
             cmd.Parameters.AddWithValue("@barcode", product.Barcode);
