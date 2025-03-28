@@ -1,4 +1,6 @@
-﻿using IMS_Services.Entities;
+﻿using BayonFramework.Database.Driver;
+using BayonFramework.Database;
+using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -7,8 +9,8 @@ namespace IMS_Services.Services.Implementation;
 
 public class SupplierServices : ICRUDServices<Supplier, byte>
 {
-
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
 
     public static byte Add(Supplier entity)
     {
@@ -17,7 +19,7 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
         (@n, @e, @ph, @add, @pm, @pt);
         ";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@n", entity.Name);
             cmd.Parameters.AddWithValue("@e", entity.Email);
@@ -42,7 +44,7 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
     {
         string query = "DELETE FROM tbSupplier WHERE SupplierID = @id;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@id", id);
             try
@@ -62,7 +64,7 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
     {
         string query = "SELECT * FROM tbSupplier;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -90,7 +92,7 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
     public static Supplier GetById(byte id)
     {
         string query = "SELECT * FROM tbSupplier WHERE SupplierID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -122,7 +124,7 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
     {
         string query = "SELECT * FROM tbSupplier WHERE SupplierName LIKE '%" + name + "%'";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -161,7 +163,7 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
             SupplierID = @id;";
 
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@n", entity.Name);
             cmd.Parameters.AddWithValue("@e", entity.Email);

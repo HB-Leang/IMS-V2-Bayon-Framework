@@ -1,4 +1,6 @@
-﻿using IMS_Services.Entities;
+﻿using BayonFramework.Database.Driver;
+using BayonFramework.Database;
+using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -7,7 +9,8 @@ namespace IMS_Services.Services.Implementation;
 
 public class CategoryServices : ICRUDServices<Category, byte>
 {
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
 
     public static byte Add(Category entity)
     {
@@ -15,7 +18,7 @@ public class CategoryServices : ICRUDServices<Category, byte>
         INSERT INTO tbCategory VALUES 
         (@n, @d);";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@n", entity.Name);
             cmd.Parameters.AddWithValue("@d", entity.Description);
@@ -37,7 +40,7 @@ public class CategoryServices : ICRUDServices<Category, byte>
     {
         string query = "DELETE FROM tbCategory WHERE CategoryID = @id;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@id", id);
             try
@@ -57,7 +60,7 @@ public class CategoryServices : ICRUDServices<Category, byte>
     {
         string query = "SELECT * FROM tbCategory;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -85,7 +88,7 @@ public class CategoryServices : ICRUDServices<Category, byte>
     public static Category GetById(byte id)
     {
         string query = "SELECT * FROM tbCategory WHERE CategoryID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -116,7 +119,7 @@ public class CategoryServices : ICRUDServices<Category, byte>
     {
         string query = "SELECT * FROM tbCategory WHERE CategoryName LIKE '%" + name + "%'";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -152,7 +155,7 @@ public class CategoryServices : ICRUDServices<Category, byte>
             CategoryID = @id;";
 
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@n", entity.Name);
             cmd.Parameters.AddWithValue("@d", entity.Description);

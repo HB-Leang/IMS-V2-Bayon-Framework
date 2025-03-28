@@ -1,6 +1,8 @@
 ﻿#define COL_MAPPING
 
 
+using BayonFramework.Database.Driver;
+using BayonFramework.Database;
 using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
@@ -15,7 +17,8 @@ namespace IMS_Services.Services.Implementation;
 
 public class InventoryServices
 {
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
 
     public const string INV_TB_NAME = "tbInventory";
     public const string INV_COL_ID = "InvID";
@@ -50,7 +53,7 @@ public class InventoryServices
     public static SqlBulkCopy Submit(string tableName)
     {
 
-        SqlBulkCopy bulkCopy = new SqlBulkCopy(connection.GetConnection(), SqlBulkCopyOptions.FireTriggers, null);
+        SqlBulkCopy bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.FireTriggers, null);
         bulkCopy.DestinationTableName = tableName;
 
         #if COL_MAPPING
@@ -76,7 +79,7 @@ public class InventoryServices
     {
         table.Rows.Clear();
         string read_query = "SELECT * FROM tbInventory";
-        SqlDataAdapter da = new SqlDataAdapter(read_query, connection.GetConnection());
+        SqlDataAdapter da = new SqlDataAdapter(read_query, connection);
         da.Fill(table);
     }
 
@@ -84,7 +87,7 @@ public class InventoryServices
     {
         string query = "SELECT * FROM tbInventory";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -111,7 +114,7 @@ public class InventoryServices
     public static Inventory GetById(int id)
     {
         string query = "SELECT * FROM tbInventory WHERE InvID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -143,7 +146,7 @@ public class InventoryServices
     {
         string query = "DELETE FROM tbInventory WHERE InvID = @id;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@id", id);
             try
@@ -177,7 +180,7 @@ public class InventoryServices
             InvID = @id;";
 
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@uc", entity.UnitCost);
             cmd.Parameters.AddWithValue("@ed", entity.ExpirationDate);

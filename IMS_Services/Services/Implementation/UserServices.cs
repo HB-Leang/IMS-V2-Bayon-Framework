@@ -1,4 +1,6 @@
-﻿using IMS_Services.Entities;
+﻿using BayonFramework.Database;
+using BayonFramework.Database.Driver;
+using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -8,15 +10,13 @@ namespace IMS_Services.Services.Implementation;
 
 public class UserServices : ICRUDServices<User, short>
 {
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
-
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
     public static short Add(User entity)
     {
-        string query = @"
-        INSERT INTO tbUser VALUES 
-        (@un, @ps, @sid);";
+        string query = @"INSERT INTO tbUser VALUES (@un, @ps, @sid);";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@un", entity.Username);
             cmd.Parameters.AddWithValue("@ps", entity.Password);
@@ -39,7 +39,7 @@ public class UserServices : ICRUDServices<User, short>
     {
         string query = "DELETE FROM tbUser WHERE UserID = @id";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@id", id);
 
@@ -59,7 +59,7 @@ public class UserServices : ICRUDServices<User, short>
     {
         string query = "SELECT * FROM tbUser;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -87,7 +87,7 @@ public class UserServices : ICRUDServices<User, short>
     public static User GetById(short id)
     {
         string query = "SELECT * FROM tbUser WHERE UserID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -119,7 +119,7 @@ public class UserServices : ICRUDServices<User, short>
     {
         string query = "SELECT * FROM tbUser WHERE UserName LIKE '%" + name + "%'";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -154,8 +154,7 @@ public class UserServices : ICRUDServices<User, short>
         WHERE 
             UserID = @id;";
 
-
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@un", entity.Username);
             cmd.Parameters.AddWithValue("@pass", entity.Password);
@@ -179,7 +178,7 @@ public class UserServices : ICRUDServices<User, short>
     {
         string query = "SELECT * FROM tbUser WHERE Username = '" + userName + "'";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try

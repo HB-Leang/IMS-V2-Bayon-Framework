@@ -2,13 +2,16 @@
 using Microsoft.Data.SqlClient;
 using IMS_Services.Entities;
 using System.Data;
+using BayonFramework.Database.Driver;
+using BayonFramework.Database;
 
 namespace IMS_Services.Services.Implementation;
 
 public class ExportServices : ICRUDServices<Export, int>
 {
 
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
 
     public static int Add(Export entity)
     {
@@ -16,7 +19,7 @@ public class ExportServices : ICRUDServices<Export, int>
         INSERT INTO tbExport VALUES 
         (@d, @ti, @tc, @h);";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@d", entity.ExportDate);
             cmd.Parameters.AddWithValue("@ti", entity.TotalItem);
@@ -39,7 +42,7 @@ public class ExportServices : ICRUDServices<Export, int>
     {
         string query = "DELETE FROM tbExport WHERE ExportID = @id;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@id", id);
             try
@@ -58,7 +61,7 @@ public class ExportServices : ICRUDServices<Export, int>
     {
         string query = "SELECT * FROM tbExport;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -85,7 +88,7 @@ public class ExportServices : ICRUDServices<Export, int>
     public static Export GetById(int id)
     {
         string query = "SELECT * FROM tbExport WHERE ExportID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -128,7 +131,7 @@ public class ExportServices : ICRUDServices<Export, int>
         WHERE 
             ExportID = @id;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@d", entity.ExportDate);
             cmd.Parameters.AddWithValue("@ti", entity.TotalItem);

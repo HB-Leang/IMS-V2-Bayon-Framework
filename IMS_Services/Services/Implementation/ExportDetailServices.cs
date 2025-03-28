@@ -1,5 +1,7 @@
 ﻿#define COL_MAPPING
 
+using BayonFramework.Database.Driver;
+using BayonFramework.Database;
 using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
@@ -13,8 +15,8 @@ namespace IMS_Services.Services.Implementation;
 public class ExportDetailServices
 {
 
-
-    private static DatabaseConnection connection = DatabaseConnection.Instance;
+    private static IDatabase db = Database.Instance.GetDatabase();
+    private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
 
     public const string EXPD_TB_NAME = "tbExportDetail";
     public const string EXPD_COL_ID = "ExportDetailID";
@@ -42,7 +44,7 @@ public class ExportDetailServices
     public static SqlBulkCopy Submit(string tableName)
     {
 
-        SqlBulkCopy bulkCopy = new SqlBulkCopy(connection.GetConnection(), SqlBulkCopyOptions.FireTriggers, null);
+        SqlBulkCopy bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.FireTriggers, null);
 
         bulkCopy.DestinationTableName = tableName;
 
@@ -64,7 +66,7 @@ public class ExportDetailServices
     public static ExportDetail GetById(int id)
     {
         string query = "SELECT * FROM tbExportDetail WHERE ExportDetailID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -96,7 +98,7 @@ public class ExportDetailServices
     {
         string query = "DELETE FROM tbExportDetail WHERE ExportDetailID = @id;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@id", id);
             try
@@ -126,7 +128,7 @@ public class ExportDetailServices
             ExportDetailID = @id;";
 
 
-        using (SqlCommand cmd = new SqlCommand(query, connection.GetConnection()))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@up", entity.UnitPrice);
             cmd.Parameters.AddWithValue("@qtye", entity.QtyExported);
@@ -156,7 +158,7 @@ public class ExportDetailServices
     {
         table.Rows.Clear();
         string read_query = "SELECT * FROM tbExportDetail";
-        SqlDataAdapter da = new SqlDataAdapter(read_query, connection.GetConnection());
+        SqlDataAdapter da = new SqlDataAdapter(read_query, connection);
         da.Fill(table);
 
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BayonFramework.Configure;
 using Microsoft.Extensions.Configuration;
 namespace IMS_Services.Utils;
 
@@ -16,6 +12,9 @@ public class ReadJsonFile
     {
         try
         {
+            App.Configure();
+
+
             var builder = new ConfigurationBuilder()
                  .AddJsonFile(jsonFile, optional: false, reloadOnChange: true);
             Configuration = builder.Build();
