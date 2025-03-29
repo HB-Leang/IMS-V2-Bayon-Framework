@@ -28,7 +28,6 @@ public class MssqlDriver : IDatabase
             return _instance;
         }
     }
-
     public void CloseConnection()
     {
         if (_connection!.State == System.Data.ConnectionState.Open)
@@ -37,7 +36,6 @@ public class MssqlDriver : IDatabase
             _connection.Close();
         }
     }
-
     public object? GetConnection()
     {
         Console.WriteLine("Connected");

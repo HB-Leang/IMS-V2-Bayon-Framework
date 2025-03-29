@@ -1,10 +1,10 @@
 ﻿using BayonFramework.Database;
+using BayonFramework.Database.Builder.Core;
+using BayonFramework.Database.Builder.Query.Condition.Enum;
 using BayonFramework.Database.Driver;
 using IMS_Services.Entities;
-using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
-
 
 namespace IMS_Services.Services.Implementation;
 
@@ -14,17 +14,23 @@ public class UserServices : ICRUDServices<User, short>
     private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
     public static short Add(User entity)
     {
-        string query = @"INSERT INTO tbUser VALUES (@un, @ps, @sid);";
+        //string query = @"INSERT INTO tbUser VALUES (@un, @ps, @sid);";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder("tbUser").Insert(new Dictionary<string, object>
+            {
+                {"Username", entity.Username! },
+                {"Password", entity.Password! },
+                {"StaffID", entity.StaffID},
+            }).Build();
+
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@un", entity.Username);
-            cmd.Parameters.AddWithValue("@ps", entity.Password);
-            cmd.Parameters.AddWithValue("@sid", entity.StaffID);
-
+            //cmd.Parameters.AddWithValue("@un", entity.Username);
+            //cmd.Parameters.AddWithValue("@ps", entity.Password);
+            //cmd.Parameters.AddWithValue("@sid", entity.StaffID);
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return (short)effected;
             }
             catch (Exception ex)
@@ -32,13 +38,13 @@ public class UserServices : ICRUDServices<User, short>
                 throw new Exception($"Failed in adding new Staff > {ex.Message}");
 
             }
+
         }
     }
 
     public static bool Delete(short id)
     {
         string query = "DELETE FROM tbUser WHERE UserID = @id";
-
         using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             cmd.Parameters.AddWithValue("@id", id);
@@ -57,9 +63,11 @@ public class UserServices : ICRUDServices<User, short>
 
     public static IEnumerable<User> GetAll()
     {
-        string query = "SELECT * FROM tbUser;";
+        //string query = "SELECT * FROM tbUser;";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder("tbUser").Build();
+
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -86,14 +94,18 @@ public class UserServices : ICRUDServices<User, short>
 
     public static User GetById(short id)
     {
-        string query = "SELECT * FROM tbUser WHERE UserID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection))
-        {
+        //string query = "SELECT * FROM tbUser WHERE UserID = " + id;
 
+        SqlQuery query = new QueryBuilder("tbUser")
+                .Where("UserID", ComparisonCondition.Equal, id)
+                .Build();
+
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
+        {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -110,21 +122,24 @@ public class UserServices : ICRUDServices<User, short>
             }
 
             reader?.Close();
-            return result;
-
+            return result!;
         }
     }
 
     public static IEnumerable<User> GetByName(string name)
     {
-        string query = "SELECT * FROM tbUser WHERE UserName LIKE '%" + name + "%'";
+        //string query = "SELECT * FROM tbUser WHERE UserName LIKE '%" + name + "%'";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder("tbUser")
+                .Where("UserName", ComparisonCondition.Like, $"%{name}%")
+                .Build();
+
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -176,14 +191,18 @@ public class UserServices : ICRUDServices<User, short>
 
     public static User GetUserByUserName(string userName)
     {
-        string query = "SELECT * FROM tbUser WHERE Username = '" + userName + "'";
+        //string query = "SELECT * FROM tbUser WHERE Username = '" + userName + "'";
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder("tbUser")
+                .Where("Username", ComparisonCondition.Equal, userName)
+                .Build();
+
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -199,14 +218,8 @@ public class UserServices : ICRUDServices<User, short>
                 }
             }
             reader?.Close();
-            return result;
+            return result!;
         }
     }
-
-
-
-
-
-
 
 }
