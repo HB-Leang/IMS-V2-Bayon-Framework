@@ -33,11 +33,6 @@ namespace BayonFramework.Database.Builder.Query
                 }
             }
             queryStringBuilder.Append(_queryStringBuilder);
-
-            //foreach (var param in _parameters)
-            //{
-            //    parameters[param.Key] = param.Value;
-            //}
         }
 
         public Dictionary<string, object> GetParameters()

@@ -8,13 +8,11 @@ public abstract class QueryDecorator : IQuery
     protected StringBuilder _queryStringBuilder;
     protected readonly Dictionary<string, object> _parameters = new Dictionary<string, object>();
     protected IQuery _query;
-
     public QueryDecorator(IQuery query)
     {
         _query = query;
         _queryStringBuilder = new StringBuilder();
     }
-
     public void Build(StringBuilder queryStringBuilder, Dictionary<string, object> parameters)
     {
         _queryStringBuilder.Clear();

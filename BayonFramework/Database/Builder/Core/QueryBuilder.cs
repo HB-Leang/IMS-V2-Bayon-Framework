@@ -1,4 +1,5 @@
 ﻿
+using BayonFramework.Database.Builder.Core.Special;
 using BayonFramework.Database.Builder.Query;
 using BayonFramework.Database.Builder.Query.Condition;
 using BayonFramework.Database.Builder.Query.Condition.Enum;
@@ -8,14 +9,6 @@ using System.Text;
 
 namespace BayonFramework.Database.Builder.Core;
 
-/// <summary>
-/// A builder class for constructing SQL queries dynamically.
-/// </summary>
-/// <remarks>
-/// This class allows users to build SQL queries by chaining methods for 
-/// filtering (WHERE), sorting (ORDER BY), limiting results (LIMIT), and joining tables (JOIN).
-/// It follows the decorator pattern to apply query modifications dynamically.
-/// </remarks>
 public class QueryBuilder : IQueryBuilder
 {
     private IQuery _query;
@@ -27,28 +20,22 @@ public class QueryBuilder : IQueryBuilder
     {
         _tableName = tableName;
         _initialColumns = columns?.ToArray() ?? Array.Empty<string>();
-        _query = new QueryComponent(_tableName, _initialColumns);
+        _query = new QueryComponent(_tableName);
     }
 
     public SqlQuery Build()
     {
         var sb = new StringBuilder();
-
         var parameters = new Dictionary<string, object>();
-
-        ///  Apply Where Cluase
         this.ApplyWhere();
 
-        /// Build Query
         _query.Build(sb, parameters);
 
-        /// Create SqlQuery
         SqlQuery sqlQuery = new SqlQuery.Builder()
             .SetQuery(_query.GetQuery())
             .AddParameters(_query.GetParameters())
             .Build();
 
-        /// Reset
         this.Reset();
 
         return sqlQuery;
@@ -89,34 +76,39 @@ public class QueryBuilder : IQueryBuilder
         _query = new OrderByDecorator(_query, columns, isAsc);
         return this;
     }
-    
-    /// <summary>
-    /// Adds a LIMIT clause to the query.
-    /// </summary>
-    /// <param name="limit">The maximum number of records to return.</param>
-    /// <returns>The current <see cref="QueryBuilder"/> instance.</returns>
+
     public QueryBuilder Limit(int limit)
     {
         _query = new LimitDecorator(_query, limit);
         return this;
     }
 
-    /// <summary>
-    /// Adds a JOIN clause to the query.
-    /// </summary>
-    /// <param name="joinType">The type of join (e.g., INNER JOIN, LEFT JOIN).</param>
-    /// <param name="tableName">The name of the table to join with.</param>
-    /// <param name="condition">The join condition specifying how the tables should be joined.</param>
-    /// <returns>The current <see cref="QueryBuilder"/> instance.</returns>
     public QueryBuilder Join(string joinType, string tableName, string condition)
     {
         _query = new JoinDecorator(_query, joinType, tableName, condition);
         return this;
     }
 
-    public QueryBuilder Insert(Dictionary<string, object> values)
+    public ISpecialQueryBuilder Insert(Dictionary<string, object> values)
     {
-        _query = new InsertComponent(_tableName, values);
+        return new SpecialQueryBuilder(new InsertComponent(_tableName, values));
+    }
+
+    public QueryBuilder Update(Dictionary<string, object> values)
+    {
+        _query = new UpdateDecorator(_query, _tableName, values);
+        return this;
+    }
+
+    public QueryBuilder Select(string[]? columns = null)
+    {
+        _query = new SelectDecorator(_query, _tableName, columns);
+        return this;
+    }
+
+    public QueryBuilder Delete()
+    {
+        _query = new DeleteDecorator(_query, _tableName);
         return this;
     }
 }

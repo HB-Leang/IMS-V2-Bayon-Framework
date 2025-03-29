@@ -17,103 +17,48 @@ public class Testing
             //IDatabase db = Database.Database.Instance.GetDatabase();
             //SqlConnection connection = (SqlConnection)db.GetConnection()!;
 
-            //var result1 = new QueryBuilder("tbUser")
-            //    .Where("UserName", ComparisonCondition.Like, "%name%")
-            //    .Build();
+            SqlQuery query1 = new QueryBuilder("tbUser").Select().Build();
+            Console.WriteLine(query1.Query);
+            foreach (var param in query1.Parameters)
+                Console.WriteLine($"{param.Key}, {param.Value}");
 
-            //Console.WriteLine(result1.Query);
-            //foreach (var param in result1.Parameters)
-            //{
-            //    Console.WriteLine(param.Key);
-            //    Console.WriteLine(param.Value);
-            //}
+            SqlQuery query2 = new QueryBuilder("tbUser").Select().Where("Age", ComparisonCondition.Equal, 10).Build();
+            Console.WriteLine(query2.Query);
+            foreach (var param in query2.Parameters)
+                Console.WriteLine($"{param.Key}, {param.Value}");
 
-            var builder1 = new QueryBuilder("Products")
-                .Insert(new Dictionary<string, object>
+            SqlQuery query3 = new QueryBuilder("tbUser").Insert(
+                new Dictionary<string, object>
                     {
-                        { "ProductName", "Phone" },
-                        { "Price", 599.99 }
-                    });
-            SqlQuery insertQuery = builder1.Build();
+                        {"Username", "piko" },
+                        {"Password", "piko1234" },
+                        {"StaffID", 1},
+                    }
+                ).Build();
+            Console.WriteLine(query3.Query);
+            foreach (var param in query3.Parameters)
+                Console.WriteLine($"{param.Key}, {param.Value}");
+
+            SqlQuery query4 = new QueryBuilder("tbUser").Update(
+                new Dictionary<string, object>
+                    {
+                        {"Username", "piko" },
+                        {"Password", "piko1234" },
+                        {"StaffID", 1},
+                    }
+                )
+                .Where("UserID", ComparisonCondition.Equal, 10)
+                .Build();
+            Console.WriteLine(query4.Query);
+            foreach (var param in query4.Parameters)
+                Console.WriteLine($"{param.Key}, {param.Value}");
 
 
-            Console.WriteLine(insertQuery.Query);
-            foreach (var param in insertQuery.Parameters)
-            {
-                Console.WriteLine(param.Key);
-                Console.WriteLine(param.Value);
-            }
+            SqlQuery query5 = new QueryBuilder("tbUser").Delete().Where("UserID", ComparisonCondition.Equal, 10).Build();
+            Console.WriteLine(query5.Query);
+            foreach (var param in query5.Parameters)
+                Console.WriteLine($"{param.Key}, {param.Value}");
 
-            //var builder2 = new QueryBuilder("Orders").Insert(new Dictionary<string, object>{ 
-            //            { "OrderDate", DateTime.Now },
-            //            { "Total", 149.99 },
-            //            { "Status", "Pending" }
-            //        }).Build();
-
-
-            //Console.WriteLine(builder2.Query);
-            //foreach (var param in builder2.Parameters)
-            //{
-            //    Console.WriteLine(param.Key);
-            //    Console.WriteLine(param.Value);
-            //}
-
-            //using (SqlCommand cmd = new SqlCommand(result1.Query, connection))
-            //{ 
-            //    SqlDataReader? reader = null;
-            //    try
-            //    {
-            //        reader = result1.GetSqlCommand(cmd).ExecuteReader();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        throw new Exception($"Error in getting staff with ID > {ex.Message}");
-            //    }
-
-            //    if (reader != null && reader.HasRows == true)
-            //    {
-            //        if (reader.Read() == true)
-            //        {
-            //            Console.WriteLine(reader);
-            //        }
-            //    }
-            //    reader?.Close();
-            //}
-
-
-            //var result2 = new QueryBuilder("tbUser")
-            //    .Join("INNER", "Orders", "Users.Id = Orders.UserId")
-            //    .Where("Age", ComparisonCondition.Equal, 10)
-            //    .Where("Name", ComparisonCondition.Like, "%kakada%", LogicalCondition.And)
-            //    .Where(
-            //        query => query.Where("Age", ComparisonCondition.GreaterThan, 10).Where("Sex", ComparisonCondition.Between, 0, LogicalCondition.And, 1)
-            //        , LogicalCondition.Or
-            //    )
-            //    .OrderBy("Name")
-            //    .Limit(10)
-            //    .Build();
-
-            //Console.WriteLine(result2.Query);
-            //foreach (var param in result2.Parameters)
-            //    Console.WriteLine(param);
-
-            //var result3 = new QueryBuilder("tbUser").Build();
-            //Console.WriteLine(result3.Query);
-            //foreach (var param in result3.Parameters)
-            //    Console.WriteLine(param);
-
-            //var result4 = new QueryBuilder("tbUser")
-            //    .Where("Age", ComparisonCondition.Equal, 10)
-            //    .Build();
-            //Console.WriteLine(result4.Query);
-            //foreach (var param in result4.Parameters)
-            //    Console.WriteLine(param);
-
-
-            //Console.WriteLine(result1.GetHashCode());
-            //Console.WriteLine(result2.GetHashCode());
-            //Console.WriteLine(result3.GetHashCode());
-            //Console.WriteLine(result4.GetHashCode());
         }
         catch (Exception ex)
         {

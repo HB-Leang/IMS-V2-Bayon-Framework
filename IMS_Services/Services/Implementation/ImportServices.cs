@@ -1,14 +1,9 @@
 ﻿using BayonFramework.Database.Driver;
 using BayonFramework.Database;
 using IMS_Services.Entities;
-using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace IMS_Services.Services.Implementation;
 

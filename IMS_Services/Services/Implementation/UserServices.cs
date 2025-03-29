@@ -65,7 +65,7 @@ public class UserServices : ICRUDServices<User, short>
     {
         //string query = "SELECT * FROM tbUser;";
 
-        SqlQuery query = new QueryBuilder("tbUser").Build();
+        SqlQuery query = new QueryBuilder("tbUser").Select().Build();
 
         using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
@@ -97,6 +97,7 @@ public class UserServices : ICRUDServices<User, short>
         //string query = "SELECT * FROM tbUser WHERE UserID = " + id;
 
         SqlQuery query = new QueryBuilder("tbUser")
+                .Select()
                 .Where("UserID", ComparisonCondition.Equal, id)
                 .Build();
 
@@ -131,6 +132,7 @@ public class UserServices : ICRUDServices<User, short>
         //string query = "SELECT * FROM tbUser WHERE UserName LIKE '%" + name + "%'";
 
         SqlQuery query = new QueryBuilder("tbUser")
+                .Select()
                 .Where("UserName", ComparisonCondition.Like, $"%{name}%")
                 .Build();
 
@@ -188,12 +190,12 @@ public class UserServices : ICRUDServices<User, short>
         }
     }
 
-
     public static User GetUserByUserName(string userName)
     {
         //string query = "SELECT * FROM tbUser WHERE Username = '" + userName + "'";
 
         SqlQuery query = new QueryBuilder("tbUser")
+                .Select()
                 .Where("Username", ComparisonCondition.Equal, userName)
                 .Build();
 
