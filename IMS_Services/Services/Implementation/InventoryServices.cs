@@ -31,7 +31,7 @@ public class InventoryServices
     public const string INV_COL_LAST_UPDATE = "LastUpdate";
     public const string INV_COL_PRO_ID = "ProductID";
     public const string INV_COL_IMP_ID = "ImportID";
-
+    public const string INV_COL_STATUS = "Status";
 
     public static DataRow AddRow(DataTable table, Inventory inv)
     {
@@ -46,6 +46,7 @@ public class InventoryServices
         row[INV_COL_NOTE] = inv.Note;
         row[INV_COL_LAST_UPDATE] = inv.LastUpdate;
         row[INV_COL_PRO_ID] = inv.ProductID;
+        row[INV_COL_STATUS] = inv.GetStatusValue();
        
         return row;
     }
@@ -68,8 +69,9 @@ public class InventoryServices
         bulkCopy.ColumnMappings.Add(INV_COL_PRO_ID, INV_COL_PRO_ID);
         bulkCopy.ColumnMappings.Add(INV_COL_NOTE, INV_COL_NOTE);
         bulkCopy.ColumnMappings.Add(INV_COL_IMP_ID, INV_COL_IMP_ID);
+        bulkCopy.ColumnMappings.Add(INV_COL_STATUS, INV_COL_STATUS);
 
-#endif
+        #endif
 
         return bulkCopy;
         
@@ -174,8 +176,8 @@ public class InventoryServices
             SubTotal = @st,
             LastUpdate = @lu,
             ProductID = @pid,
-            ImportID = @im
-
+            ImportID = @im,
+            Status = @status
         WHERE 
             InvID = @id;";
 
@@ -191,6 +193,7 @@ public class InventoryServices
             cmd.Parameters.AddWithValue("@lu", entity.LastUpdate);
             cmd.Parameters.AddWithValue("@pid", entity.ProductID);
             cmd.Parameters.AddWithValue("@im", entity.ImportID);
+            cmd.Parameters.AddWithValue("@status", entity.GetStatusValue());
 
             cmd.Parameters.AddWithValue("@id", entity.ID);
 
@@ -201,7 +204,7 @@ public class InventoryServices
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed in updating new Inventory > {ex.Message}");
+                throw new Exception($"Failed in updating Inventory > {ex.Message}");
 
             }
 

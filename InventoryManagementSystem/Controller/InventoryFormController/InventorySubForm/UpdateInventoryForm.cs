@@ -1,5 +1,6 @@
 ﻿using IMS_Services.Entities;
 using IMS_Services.Services.Implementation;
+using IMS_Services.States;
 using InventoryManagementSystem.Utils;
 using InventoryManagementSystem.Validation;
 using Microsoft.IdentityModel.Tokens;
@@ -63,6 +64,8 @@ namespace InventoryManagementSystem.Controller.InventoryFormController.Inventory
                     inventory.ID = int.Parse(txtId.Text);
 
                     inventory.ImportID = int.Parse(cboImportID.SelectedItem.ToString());
+
+                    inventory.UpdateStatus();
 
                     bool effected = InventoryServices.Update(inventory);
 

@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using IMS_Services.Entities;
-using IMS_Services.Services;
+using IMS_Services.Observer;
+using IMS_Services.Observer.Subject;
 using IMS_Services.Services.Implementation;
 using InventoryManagementSystem.Controller.ImportExportFormController.SubImportExportForm;
 using InventoryManagementSystem.Controller.InventoryFormController.InventorySubForm;

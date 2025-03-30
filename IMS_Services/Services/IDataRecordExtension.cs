@@ -1,5 +1,6 @@
 ﻿using IMS_Services.Entities;
 using IMS_Services.EnumUtils;
+using IMS_Services.States;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -93,6 +94,9 @@ public static class IDataRecordExtension
 
         index = record.GetOrdinal("LastUpdate");
         DateTime lUpdate = record.GetDateTime(index);
+
+        index = record.GetOrdinal("Status");
+        IInventoryState state = InventoryStates.GetState(record.GetByte(index));
 
         return new Inventory()
         {

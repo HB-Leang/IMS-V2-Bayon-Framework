@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IMS_Services.Entities;
+using IMS_Services.Services.Implementation;
 
-namespace IMS_Services.Services.Implementation;
+namespace IMS_Services.Observer.Subject;
 
 public class StockSubject
 {
@@ -25,7 +26,7 @@ public class StockSubject
     {
         string message = "Stocks are normal.";
         var products = ProductServices.GetLowStockProducts();
-        if(products == null || products.Count() == 0)
+        if (products == null || products.Count() == 0)
         {
             return;
         }

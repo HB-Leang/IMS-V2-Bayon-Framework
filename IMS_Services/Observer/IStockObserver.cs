@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IMS_Services.Services;
+namespace IMS_Services.Observer;
 
 public interface IStockObserver
 {

@@ -1,4 +1,7 @@
-﻿namespace IMS_Services.Entities;
+﻿using IMS_Services.States;
+using IMS_Services.States.Implementation;
+
+namespace IMS_Services.Entities;
 
 public class Inventory
 {
@@ -12,4 +15,20 @@ public class Inventory
     public int ImportID { get; set; }
     public string? Note { get; set; }
     public DateTime LastUpdate {  get; set; }
+    public IInventoryState? State { get; set; } = InventoryStates.GetState(0);
+    public void UpdateStatus()
+    {
+        State?.UpdateState(this);
+    }
+    public bool CanExport() => State?.CanBeExported() ?? false;
+    public byte GetStatusValue()
+    {
+        return State switch
+        {
+            ActiveState => 0,
+            ExpiredState => 1,
+            DepletedState => 2,
+            _ => 0 // Default to Active
+        };
+    }
 }
