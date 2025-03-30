@@ -120,7 +120,7 @@ public class ProductServices : ICRUDServices<Product, int>
 
     public static IEnumerable<Product> GetLowStockProducts()
     {
-        string query = "SELECT * FROM tbProduct WHERE TotalStock < 5;";
+        string query = "SELECT * FROM tbProduct WHERE TotalStock < 6;";
         using (SqlCommand cmd = new SqlCommand(query, connection))
         {
             SqlDataReader? reader = null;

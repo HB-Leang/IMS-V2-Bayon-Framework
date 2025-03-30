@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
             pHead = new Panel();
             productFormTitle = new Label();
             pBottom = new Panel();
@@ -47,6 +47,7 @@
             colTotalStock = new DataGridViewTextBoxColumn();
             colCat = new DataGridViewTextBoxColumn();
             panel2 = new Panel();
+            listStockMessage = new ListBox();
             panel4 = new Panel();
             label1 = new Label();
             txtSearch = new TextBox();
@@ -117,14 +118,14 @@
             dgvProduct.AllowUserToAddRows = false;
             dgvProduct.AllowUserToDeleteRows = false;
             dgvProduct.BackgroundColor = SystemColors.Control;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = SystemColors.ActiveCaptionText;
-            dataGridViewCellStyle6.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = Color.FromArgb(0, 192, 0);
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-            dgvProduct.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.ActiveCaptionText;
+            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = Color.FromArgb(0, 192, 0);
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvProduct.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvProduct.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProduct.Columns.AddRange(new DataGridViewColumn[] { colId, colBar, colName, colSalePrice, colUOM, colTotalStock, colCat });
             dgvProduct.Dock = DockStyle.Fill;
@@ -140,8 +141,8 @@
             // colId
             // 
             colId.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            dataGridViewCellStyle7.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            colId.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle2.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            colId.DefaultCellStyle = dataGridViewCellStyle2;
             colId.FillWeight = 120F;
             colId.HeaderText = "ID";
             colId.MinimumWidth = 6;
@@ -152,8 +153,8 @@
             // colBar
             // 
             colBar.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle8.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            colBar.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            colBar.DefaultCellStyle = dataGridViewCellStyle3;
             colBar.FillWeight = 80F;
             colBar.HeaderText = "BarCode";
             colBar.MinimumWidth = 6;
@@ -163,8 +164,8 @@
             // colName
             // 
             colName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle9.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            colName.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle4.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            colName.DefaultCellStyle = dataGridViewCellStyle4;
             colName.HeaderText = "Name";
             colName.MinimumWidth = 6;
             colName.Name = "colName";
@@ -173,8 +174,8 @@
             // colSalePrice
             // 
             colSalePrice.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            dataGridViewCellStyle10.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            colSalePrice.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle5.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            colSalePrice.DefaultCellStyle = dataGridViewCellStyle5;
             colSalePrice.HeaderText = "SalePrice";
             colSalePrice.MinimumWidth = 6;
             colSalePrice.Name = "colSalePrice";
@@ -210,6 +211,7 @@
             // 
             // panel2
             // 
+            panel2.Controls.Add(listStockMessage);
             panel2.Controls.Add(panel4);
             panel2.Controls.Add(btnDelete);
             panel2.Controls.Add(btnUpdate);
@@ -219,6 +221,19 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(300, 642);
             panel2.TabIndex = 2;
+            // 
+            // listStockMessage
+            // 
+            listStockMessage.Dock = DockStyle.Bottom;
+            listStockMessage.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            listStockMessage.FormattingEnabled = true;
+            listStockMessage.ItemHeight = 20;
+            listStockMessage.Location = new Point(0, 478);
+            listStockMessage.Margin = new Padding(3, 2, 3, 2);
+            listStockMessage.Name = "listStockMessage";
+            listStockMessage.SelectionMode = SelectionMode.None;
+            listStockMessage.Size = new Size(300, 164);
+            listStockMessage.TabIndex = 29;
             // 
             // panel4
             // 
@@ -258,7 +273,7 @@
             btnDelete.Anchor = AnchorStyles.None;
             btnDelete.BackColor = Color.Salmon;
             btnDelete.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnDelete.Location = new Point(79, 399);
+            btnDelete.Location = new Point(82, 365);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(120, 60);
             btnDelete.TabIndex = 25;
@@ -270,7 +285,7 @@
             btnUpdate.Anchor = AnchorStyles.None;
             btnUpdate.BackColor = Color.LightYellow;
             btnUpdate.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnUpdate.Location = new Point(79, 286);
+            btnUpdate.Location = new Point(82, 252);
             btnUpdate.Name = "btnUpdate";
             btnUpdate.Size = new Size(120, 60);
             btnUpdate.TabIndex = 24;
@@ -282,7 +297,7 @@
             btnAdd.Anchor = AnchorStyles.None;
             btnAdd.BackColor = Color.LightGreen;
             btnAdd.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnAdd.Location = new Point(79, 176);
+            btnAdd.Location = new Point(82, 143);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(120, 60);
             btnAdd.TabIndex = 23;
@@ -344,5 +359,6 @@
         private Label label1;
         private Button btnAdd;
         private Panel panel4;
+        private ListBox listStockMessage;
     }
 }

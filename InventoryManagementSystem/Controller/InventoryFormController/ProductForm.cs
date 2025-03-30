@@ -1,4 +1,5 @@
-﻿using IMS_Services.Entities;
+﻿using System.Windows.Forms;
+using IMS_Services.Entities;
 using IMS_Services.Services;
 using IMS_Services.Services.Implementation;
 using InventoryManagementSystem.Controller.ImportExportFormController.SubImportExportForm;
@@ -154,7 +155,13 @@ namespace InventoryManagementSystem.Controller
 
         public void OnLowStock(string message)
         {
-            MessageBox.Show(message, "Low Stock Alert", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //message = "The following products are low on stock\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining";
+            string[] lines = message.Split('\n'); // Split string into lines
+
+            
+            listStockMessage.Items.Clear();
+            listStockMessage.Items.AddRange(lines);
+
         }
 
         #endregion

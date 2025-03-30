@@ -23,21 +23,22 @@ public class StockSubject
 
     public void CheckStockLevels()
     {
+        string message = "Stocks are normal.";
         var products = ProductServices.GetLowStockProducts();
         if(products == null || products.Count() == 0)
         {
             return;
         }
 
-        string lowStockMessage = "The following products are low on stock:\n\n";
+        message = "The following products are low on stock:\n\n";
         foreach (var product in products)
         {
-            lowStockMessage += $"{product.Name}: {product.TotalStock} units remaining\n";
+            message += $"{product.Name}: {product.TotalStock} units remaining\n";
         }
-        NotifyObserver(lowStockMessage);
+        NotifyObserver(message);
     }
 
-    public void NotifyObserver(string message)
+    private void NotifyObserver(string message)
     {
         foreach (var observer in observers)
         {

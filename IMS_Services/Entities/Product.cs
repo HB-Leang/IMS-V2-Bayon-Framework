@@ -18,4 +18,8 @@ public class Product
     public short TotalStock { get; set; }
     public byte CategoryID { get; set; }
 
+    public Product()
+    {
+        Console.WriteLine("Default Constructor Called");
+    }
 }
