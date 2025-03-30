@@ -3,5 +3,5 @@
 public interface IQueryBuilder : IQueryOperator
 {
     SqlQuery Build();
-    QueryBuilder ApplyWhere();
+    //QueryBuilder ApplyWhere();
 }

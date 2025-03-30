@@ -3,14 +3,8 @@ using BayonFramework.Database.Driver;
 using BayonFramework.Database.Factory;
 using BayonFramework.Database.Factory.Implementation;
 
-
 namespace BayonFramework.Database;
 
-/**
- * 
- * Singleton
- * 
- */
 public class Database
 {
     private static readonly Database? _instance = null;
@@ -19,7 +13,6 @@ public class Database
     {
         _factory = new DatabaseFactory();
     } 
-
     public static Database Instance
     {
         get
