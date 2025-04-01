@@ -7,16 +7,15 @@ namespace BayonFramework.Database.Builder.Query;
 
 public class QueryComponent : IQuery
 {
-    private StringBuilder _queryStringBuilder = new StringBuilder();
-    private Dictionary<string, object> _parameters = new Dictionary<string, object>();
+    private StringBuilder _queryStringBuilder;
+    private Dictionary<string, object> _parameters;
     public string _tableName;
-
     public QueryComponent(string tableName)
     {
         _tableName = tableName;
-        _queryStringBuilder.Clear();
+        _queryStringBuilder = new StringBuilder();
+        _parameters = new Dictionary<string, object>();
     }
-
     public void Build(StringBuilder queryStringBuilder, Dictionary<string, object> parameters)
     {
         _queryStringBuilder.Clear();
@@ -25,17 +24,10 @@ public class QueryComponent : IQuery
         foreach (var param in _parameters)
             parameters[param.Key] = param.Value;
     }
-
-    public Dictionary<string, object> Parameters
-    {
-        get { return _parameters; }
-    }
-
     public Dictionary<string, object> GetParameters()
     {
         return this._parameters;
     }
-
     public string GetQuery()
     {
         return _queryStringBuilder.ToString();

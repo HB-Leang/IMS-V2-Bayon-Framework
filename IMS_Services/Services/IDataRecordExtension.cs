@@ -313,21 +313,28 @@ public static class IDataRecordExtension
         index = record.GetOrdinal("Password");
         String pass = record.GetString(index);
 
+        index = record.GetOrdinal("IsLocked");
+        bool isLocked = record.GetBoolean(index);
+
+        index = record.GetOrdinal("Attempt");
+        short attempt = record.GetByte(index);
+
+        index = record.GetOrdinal("LockTime");
+        DateTime lockTime = record.IsDBNull(index) ? new DateTime().AddTicks(1) : record.GetDateTime(index);
+         
         index = record.GetOrdinal("StaffID");
         short sid = record.GetInt16(index);
         
-
-
-
         return new User()
         {
             ID = id,
             Username = un,
             Password = pass,
+            IsLocked = isLocked,
+            Attempt = attempt,
+            LockTime = lockTime,
             StaffID = sid,
         };
     }
-
-
 }
 

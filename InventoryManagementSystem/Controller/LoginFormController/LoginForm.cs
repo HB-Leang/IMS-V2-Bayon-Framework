@@ -18,8 +18,6 @@ namespace SSRMS_Project.Forms
     {
         private Control[] controls;
 
-        private User? user = null;
-
         public LoginForm()
         {
             InitializeComponent();
@@ -37,7 +35,6 @@ namespace SSRMS_Project.Forms
             this.ActiveControl = txtUsername;
 
             MainForm.closeHandler += DoCloseClose;
-
         }
 
         #region [Event Handler Function]
@@ -45,7 +42,6 @@ namespace SSRMS_Project.Forms
         private void DoCloseClose()
         {
             this.Dispose();
-
         }
 
         private void DoClickLogin(object? sender, EventArgs e)
@@ -63,7 +59,6 @@ namespace SSRMS_Project.Forms
         #region [User Defined Functions]
         private void checkLogin()
         {
-            
             try
             {
                 if (string.IsNullOrEmpty(txtUsername.Text.Trim()))
@@ -77,17 +72,12 @@ namespace SSRMS_Project.Forms
                     return;
                 }
 
-                user = UserServices.GetUserByUserName(txtUsername.Text.Trim());
-                if (user == null)
-                {
-                    MessageBox.Show("User Not Found !", "Alter", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                string errorMessage;
+                
+                bool login = LoginService.Login(txtUsername.Text.Trim(), txtPassword.Text.Trim(), out errorMessage);
 
-                // Validate the password
-                if (user.Password != txtPassword.Text.Trim() || user.Username != txtUsername.Text.Trim())
-                {
-                    MessageBox.Show("Incorrect Password Or UserName", "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!login) {
+                    MessageBox.Show($"{errorMessage}", "Alter", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 

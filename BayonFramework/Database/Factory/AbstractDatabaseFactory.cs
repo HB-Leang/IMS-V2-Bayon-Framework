@@ -2,8 +2,8 @@
 
 namespace BayonFramework.Database.Factory;
 
-public interface AbstractDatabaseFactory
+public abstract class AbstractDatabaseFactory
 {
-    IDatabase CreateMssql();
-    IDatabase CreatePgsql();
+    public abstract IDatabase CreateMssql();
+    public abstract IDatabase CreatePgsql();
 }

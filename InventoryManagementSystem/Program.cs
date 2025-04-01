@@ -1,9 +1,7 @@
-using IMS_Services.Entities;
 using IMS_Services.Manager;
 using IMS_Services.Utils;
-using Microsoft.Data.SqlClient;
 using SSRMS_Project.Forms;
-using System;
+
 
 namespace InventoryManagementSystem;
 
@@ -24,16 +22,12 @@ public static class Program
     [STAThread]
     static void Main()
     {
-
         //// Initialize Database
         ReadJsonFile.Load("appsettings.json");
 
-
         // Application Run
         ApplicationConfiguration.Initialize();
+        //Application.Run(new LoginForm());
         Application.Run(new LoginForm());
-
     }
-
-
 }

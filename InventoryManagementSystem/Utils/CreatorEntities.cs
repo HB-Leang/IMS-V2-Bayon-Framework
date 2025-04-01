@@ -116,7 +116,9 @@ public static class CreatorEntities
         {
             Username = Convertor.ConvertToString(controls[1]),
             Password = Convertor.ConvertToString(controls[2]),
-            StaffID = Convertor.ConvertToHandleByID(controls[3]),
+            IsLocked = Convertor.ConvertToBooleanFromCheckBox(controls[3]),
+            Attempt = Convertor.ConvertToInt16(controls[4]),
+            StaffID = Convertor.ConvertToHandleByID(controls[5]),
         };
     }
 

@@ -3,9 +3,6 @@ using Microsoft.Data.SqlClient;
 
 namespace BayonFramework.Database.Driver.Implementation;
 
-/**
- * Singleton
- */
 public class MssqlDriver : IDatabase
 {
     private IConnectionStringProvider _connectionString;

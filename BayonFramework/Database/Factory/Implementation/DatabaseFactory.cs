@@ -6,12 +6,12 @@ namespace BayonFramework.Database.Factory.Implementation;
 
 public class DatabaseFactory : AbstractDatabaseFactory
 {
-    public IDatabase CreateMssql()
+    public override IDatabase CreateMssql()
     {
         return MssqlDriver.Instance;
     }
 
-    public IDatabase CreatePgsql()
+    public override IDatabase CreatePgsql()
     {
         return PgsqlDriver.Instance;
     }
