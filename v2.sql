@@ -111,7 +111,7 @@ GO
 		Password VARCHAR(50) NOT NULL,
 		IsLocked BIT,
 		Attempt TINYINT,
-		LockDate TIMESTAMP,
+		LockTime DATETIME,
 		StaffID SMALLINT,
 		CONSTRAINT FK_tbUser_StaffID FOREIGN KEY (StaffID) REFERENCES tbStaff(StaffID) ON DELETE CASCADE ON UPDATE CASCADE,
 	);
@@ -315,4 +315,5 @@ GO
 
 /* End of DB Triggers */
 INSERT INTO tbStaff VALUES('piko', 1, '2000-01-01', 'Manager', 'PP', '(855) 12-345-67', '(855) 12-345-67', '2024-11-26', 3000.0000, 0)
-INSERT INTO tbUser VALUES('piko','piko',0,0,null,1);
+
+INSERT INTO tbUser VALUES('piko','piko',0,0,CURRENT_TIMESTAMP,1);
