@@ -310,6 +310,33 @@ BEGIN
 END;
 GO
 
+CREATE TRIGGER ManageExpiredStock
+ON tbInventory
+AFTER UPDATE
+AS
+BEGIN
+    -- Deduct stock when transitioning from Active (0) to Expired (1)
+    UPDATE p
+    SET p.TotalStock = p.TotalStock - i.CurrentStock
+    FROM tbProduct p
+    INNER JOIN INSERTED i ON p.ProductID = i.ProductID
+    INNER JOIN DELETED d ON i.InvID = d.InvID
+    WHERE i.Status = 1 -- New status is Expired
+    AND d.Status = 0 -- Old status was Active
+    AND i.CurrentStock > 0;
+
+    -- Add stock back when transitioning from Expired (1) to Active (0)
+    UPDATE p
+    SET p.TotalStock = p.TotalStock + i.CurrentStock
+    FROM tbProduct p
+    INNER JOIN INSERTED i ON p.ProductID = i.ProductID
+    INNER JOIN DELETED d ON i.InvID = d.InvID
+    WHERE i.Status = 0 -- New status is Active
+    AND d.Status = 1 -- Old status was Expired
+    AND i.CurrentStock > 0;
+END;
+GO
+
 /* End of DB Triggers */
 INSERT INTO tbStaff VALUES('piko', 1, '2000-01-01', 'Manager', 'PP', '(855) 12-345-67', '(855) 12-345-67', '2024-11-26', 3000.0000, 0)
 INSERT INTO tbUser VALUES('piko', 'piko', 1);

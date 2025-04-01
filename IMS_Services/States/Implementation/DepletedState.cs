@@ -11,7 +11,6 @@ public class DepletedState : IInventoryState
     {
         if (inventory.CurrentStock == 0) return;
 
-
         if (inventory.ExpirationDate > DateTime.Today)
             inventory.State = InventoryStates.GetState(1);
         else

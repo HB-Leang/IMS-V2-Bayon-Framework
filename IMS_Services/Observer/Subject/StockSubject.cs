@@ -26,16 +26,16 @@ public class StockSubject
     {
         string message = "Stocks are normal.";
         var products = ProductServices.GetLowStockProducts();
-        if (products == null || products.Count() == 0)
+        if (products != null && products.Count() > 0)
         {
-            return;
+            message = "The following products are low on stock:\n\n";
+            foreach (var product in products)
+            {
+                message += $"{product.Name}: {product.TotalStock} units remaining\n";
+            }
         }
 
-        message = "The following products are low on stock:\n\n";
-        foreach (var product in products)
-        {
-            message += $"{product.Name}: {product.TotalStock} units remaining\n";
-        }
+        
         NotifyObserver(message);
     }
 

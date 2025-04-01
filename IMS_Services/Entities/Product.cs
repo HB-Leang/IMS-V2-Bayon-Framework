@@ -17,9 +17,4 @@ public class Product
     public EnumUOM UOM { get; set; }
     public short TotalStock { get; set; }
     public byte CategoryID { get; set; }
-
-    public Product()
-    {
-        Console.WriteLine("Default Constructor Called");
-    }
 }

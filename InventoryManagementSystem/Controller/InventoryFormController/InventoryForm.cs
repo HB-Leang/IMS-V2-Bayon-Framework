@@ -1,6 +1,7 @@
 ﻿
 using IMS_Services.Entities;
 using IMS_Services.Services.Implementation;
+using IMS_Services.States;
 using InventoryManagementSystem.Controller.ImportExportFormController;
 using InventoryManagementSystem.Controller.InventoryFormController.InventorySubForm;
 using Microsoft.Data.SqlClient;
@@ -12,7 +13,7 @@ public partial class InventoryForm : Form
 {
     private static InventoryForm? instance = null;
 
-    
+
     BindingSource bs = new BindingSource();
 
     DataTable tblInv = new DataTable("tbInventory");
@@ -34,8 +35,18 @@ public partial class InventoryForm : Form
         btnUpdate.Click += DoClickUpdateInventory;
 
         dgvInventory.Click += DoClickDataGridView;
+        dgvInventory.CellFormatting += DoInventoryCellFormat;
 
         instance = this;
+    }
+
+    private void DoInventoryCellFormat(object? sender, DataGridViewCellFormattingEventArgs e)
+    {
+        if (dgvInventory.Columns[e.ColumnIndex].Name != "Status" || e.Value == null || e.Value == DBNull.Value) return;
+
+        byte statusValue = Convert.ToByte(e.Value);
+        e.Value = InventoryStates.GetState(statusValue).GetStatus();
+        e.FormattingApplied = true;
     }
 
     private void DoClickDeleteInventory(object? sender, EventArgs e)
@@ -143,6 +154,7 @@ public partial class InventoryForm : Form
         dgvInventory.Columns["ExpirationDate"].DefaultCellStyle.Format = "dd/MM/yyyy";
         dgvInventory.Columns["LastUpdate"].DefaultCellStyle.Format = "dd/MM/yyyy";
         dgvInventory.Columns["InvID"].Width = 200;
+      
     }
 
     private void DoClickAddInventory(object? sender, EventArgs e)

@@ -16,7 +16,7 @@ namespace InventoryManagementSystem.Controller
         public ProductForm()
         {
             InitializeComponent();
-            LoadData();
+            
             
             btnAdd.Click += DoClickAddProduct;
             btnUpdate.Click += DoClickUpdateProduct;
@@ -25,8 +25,8 @@ namespace InventoryManagementSystem.Controller
             dgvProduct.Click += DoClickDataGridView;
             txtSearch.TextChanged += DoSearchTextChange;
             stockSubject.Attach(this);
-            this.Load += DoOnFormLoad;
-
+            //this.Load += DoOnFormLoad;
+            LoadData();
             instance = this;
             //UpdateExportDetail updateExportDetail = UpdateExportDetail.GetInstance();
             //if (updateExportDetail != null)
@@ -148,6 +148,7 @@ namespace InventoryManagementSystem.Controller
             {
                 AddToView(product);
             }
+            stockSubject.CheckStockLevels();
         }
         private void AddToView(Product product)
         {
