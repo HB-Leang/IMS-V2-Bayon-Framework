@@ -12,34 +12,52 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
         public static event CountEventHandler? countEventHandler;
 
         private Control[] controls;
-        
+
         public UserForm()
         {
             InitializeComponent();
 
             LoadData();
             LoadComboBoxes.LoadHandleByCBO(cboStaff);
+
+            lbAttempt.Visible = false;
+            numAttempt.Visible = false;
+
+            txtPassword.Enabled = false;
+
             cboStaff.SelectedIndex = -1;
+            chkLocked.Checked = false;
 
             controls = new Control[] {
                 txtId,
                 txtUserName,
                 txtPassword,
+                chkLocked,
+                numAttempt,
                 cboStaff,
                 listUser
             };
-
 
             btnInsert.Click += DoClickInsertUser;
             btnUpdate.Click += DoClickUpdateUser;
             btnClear.Click += DoClickClearUser;
             btnDelete.Click += DoClickDeleteUser;
+            chkPassword.Click += DoClickCheckPassword;
+
 
             listUser.Click += DoClickListUser;
             txtSearch.TextChanged += DoSearchTextChange;
-
         }
 
+        private void DoClickCheckPassword(object? sender, EventArgs e)
+        {
+            if (chkPassword.Checked == false)
+            {
+                txtPassword.Enabled = false;
+                return;
+            }
+            txtPassword.Enabled = true;
+        }
 
         #region Event
         private void DoSearchTextChange(object? sender, EventArgs e)
@@ -55,6 +73,8 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
         private void DoClickListUser(object? sender, EventArgs e)
         {
             btnInsert.Enabled = false;
+            lbAttempt.Visible = true;
+            numAttempt.Visible = true;
             LoadEntities.LoadUserFromListStaff(controls, listUser);
         }
 
@@ -100,6 +120,8 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
                 Util.ClearControls(controls);
                 LoadData();
                 btnInsert.Enabled = true;
+                lbAttempt.Visible = false;
+                numAttempt.Visible = false;
             }
             catch (Exception ex)
             {
@@ -110,6 +132,8 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
         private void DoClickClearUser(object? sender, EventArgs e)
         {
             Util.ClearControls(controls);
+            lbAttempt.Visible = false;
+            numAttempt.Visible = false;
             btnInsert.Enabled = true;
         }
 
@@ -118,12 +142,12 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
             try
             {
                 if (IsUserValid())
-                {   
+                {
                     User user = CreatorEntities.CreateUser(controls);
-                   
+
                     user.ID = short.Parse(txtId.Text);
 
-                    bool effected = UserServices.Update(user);
+                    bool effected = UserServices.Update(user, chkPassword.Checked);
 
                     if (effected)
                     {
@@ -135,8 +159,9 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
                     {
                         MessageBox.Show($"Error Updating Data", "Updating", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
                     btnInsert.Enabled = true;
+                    lbAttempt.Visible = false;
+                    numAttempt.Visible = false;
                 }
                 else
                 {
@@ -164,7 +189,9 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
                     LoadData();
 
                     MessageBox.Show($"User Added!", "Creating", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                    lbAttempt.Visible = false;
+                    numAttempt.Visible = false;
+                    chkPassword.Checked = true;
                     countEventHandler!.Invoke(this);
 
                 }
@@ -179,12 +206,7 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
             }
         }
 
-
         #endregion
-
-
-
-
         #region method
 
         private void LoadData()
@@ -199,11 +221,6 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
 
         #endregion
 
-
-
-
-
-
         #region Validation
 
 
@@ -215,10 +232,7 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
         }
 
 
-
-
         #endregion
-
 
     }
 }

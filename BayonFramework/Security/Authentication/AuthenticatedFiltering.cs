@@ -23,10 +23,9 @@ namespace BayonFramework.Security.Authentication
             }
             if(!_algorithm.Verify(auth.Password, auth.HashPassword))
             {
-                errorMessage = "Password Wrong";
+                errorMessage = "Password: Wrong";
                 return false;
             }
-
             errorMessage = string.Empty;
             return NextFilterChain?.Handle(input, out errorMessage) ?? true;
         }

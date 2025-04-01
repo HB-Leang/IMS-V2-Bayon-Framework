@@ -19,6 +19,14 @@ public static class Convertor
         }
         throw new Exception("Problem While Converting ...");
     }
+    public static Int16 ConvertToInt16(Control control)
+    {
+        if (Int16.TryParse(control.Text.Trim(), out Int16 data))
+        {
+            return data;
+        }
+        throw new Exception("Problem While Converting ...");
+    }
     public static decimal ConvertToDecimal(Control control)
     {
         if (decimal.TryParse(control.Text.Trim(), out decimal data))

@@ -14,6 +14,7 @@ namespace BayonFramework
             //SimpleTest();
             //RegisterTest();
             //LoginTest();
+            Customize();
 
         }
 
@@ -105,7 +106,16 @@ namespace BayonFramework
             TestPassword(security, test2);
         }
 
-        static void TestPassword(ISecurityFilterChain securityFilterChain,SecurityRequest request)
+        public static void Customize()
+        {
+            var test1 = new AuthRequest("piko", "piko12345").Build();
+            var security = new CustomSecurityConfigure(test1);
+
+            Console.WriteLine(security.Execute());
+            Console.WriteLine(security.ErrorMessage);
+        }
+
+        static void TestPassword(ISecurityFilterChain securityFilterChain, SecurityRequest request)
         {
             if (securityFilterChain.Handle(request, out string error))
             {
