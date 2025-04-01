@@ -4,6 +4,7 @@ using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using BayonFramework.Database.Builder.Core;
 
 namespace IMS_Services.Services.Implementation;
 
@@ -14,15 +15,28 @@ public class CategoryServices : ICRUDServices<Category, byte>
 
     public static byte Add(Category entity)
     {
-        string query = @"
-        INSERT INTO tbCategory VALUES 
-        (@n, @d);";
+        //string query = @"
+        //INSERT INTO tbCategory VALUES 
+        //(@n, @d);";
+        SqlQuery query = new QueryBuilder("tbCategory").Insert(
+                new Dictionary<string, object>
+                    {
+                        {"CategoryName", entity.Name },
+                        {"CategoryDesc", entity.Description },
+                      
+                    }
+                ).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@n", entity.Name);
-            cmd.Parameters.AddWithValue("@d", entity.Description);
-            
+            foreach (var param in query.Parameters)
+            {
+                cmd.Parameters.AddWithValue($"{param.Key}", param.Value);
+            }
+
+            //cmd.Parameters.AddWithValue("@n", entity.Name);
+            //cmd.Parameters.AddWithValue("@d", entity.Description);
+
             try
             {
                 int effected = cmd.ExecuteNonQuery();

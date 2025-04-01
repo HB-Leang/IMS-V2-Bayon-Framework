@@ -25,14 +25,10 @@ namespace InventoryManagementSystem.Controller
             dgvProduct.Click += DoClickDataGridView;
             txtSearch.TextChanged += DoSearchTextChange;
             stockSubject.Attach(this);
-            //this.Load += DoOnFormLoad;
+
             LoadData();
             instance = this;
-            //UpdateExportDetail updateExportDetail = UpdateExportDetail.GetInstance();
-            //if (updateExportDetail != null)
-            //{
-            //    updateExportDetail.ExportModified += (sender) => LoadData();
-            //}
+   
         }
 
 
@@ -157,10 +153,8 @@ namespace InventoryManagementSystem.Controller
 
         public void OnLowStock(string message)
         {
-            //message = "The following products are low on stock\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining\nFanta : 5 units remaining";
             string[] lines = message.Split('\n'); // Split string into lines
 
-            
             listStockMessage.Items.Clear();
             listStockMessage.Items.AddRange(lines);
 
