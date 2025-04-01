@@ -26,11 +26,11 @@ namespace BayonFramework.Security.Builder.Configure
 
         public AuthBuilderConfigure Authenticated()
         {
-            _filters.Add(new AuthenticatedFiltering(_securityChain._encryptAlgorithm.ToString()));
+            _filters.Add(new AuthenticatedFiltering(_securityChain._encryptAlgorithm));
             return this;
         }
 
-        public SecurityChain AuthConfig()
+        public SecurityChain Auth()
         {
             _securityChain.DoAddAuthFiltering(_filters);
            return _securityChain;

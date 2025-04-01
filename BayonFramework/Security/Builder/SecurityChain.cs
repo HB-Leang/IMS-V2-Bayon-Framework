@@ -28,6 +28,13 @@ namespace BayonFramework.Security.Builder
             return registerConfigure.Regiter();
         }
 
+        public ISecurityChain AuthFilter(Action<AuthBuilderConfigure> configure)
+        {
+            AuthBuilderConfigure authConfigure = new AuthBuilderConfigure(this);
+            configure(authConfigure);
+            return authConfigure.Auth();
+        }
+
         public ISecurityChain Encrypt(EncryptAlgorithm encryptAlgorithm = EncryptAlgorithm.Bcrypt)
         {
             _encryptAlgorithm = encryptAlgorithm;
@@ -49,7 +56,6 @@ namespace BayonFramework.Security.Builder
         {
             _filters.AddRange(authenticationFilterChains);
         }
-
 
         public ISecurityFilterChain Build()
         {

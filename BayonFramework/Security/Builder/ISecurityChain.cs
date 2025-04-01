@@ -9,6 +9,7 @@ namespace BayonFramework.Security.Builder
         ISecurityFilterChain Build();
         public ISecurityChain PasswordFilter(Action<PasswordBuilderConfigure> configure);
         public ISecurityChain RegisterFilter(Action<RegisterBuilderConfigure> configure);
+        public ISecurityChain AuthFilter(Action<AuthBuilderConfigure> configure);
         public ISecurityChain Encrypt(EncryptAlgorithm encryptAlgorithm = EncryptAlgorithm.Bcrypt);
     }
 }
