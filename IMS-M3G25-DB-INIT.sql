@@ -343,5 +343,5 @@ GO
 
 /* End of DB Triggers */
 INSERT INTO tbStaff VALUES('piko', 1, '2000-01-01', 'Manager', 'PP', '(855) 12-345-67', '(855) 12-345-67', '2024-11-26', 3000.0000, 0)
-
-INSERT INTO tbUser VALUES('piko','piko',0,0,CURRENT_TIMESTAMP,1);
+--password piko1234
+INSERT INTO tbUser VALUES('piko','$2a$11$kr2VzGyQGz3au7lGYnlT9O5Fp0I94nnPGenj08EhyCwP8XhGfXW/G',0,0,CURRENT_TIMESTAMP,1);

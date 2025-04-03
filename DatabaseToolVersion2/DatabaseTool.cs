@@ -3,7 +3,7 @@ namespace DatabaseToolVersion2
 {
     public partial class DatabaseTool : Form
     {
-        private string destinationPath = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\BayonFramework\.env");
+        //private string destinationPath = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\BayonFramework\.env");
         private string sourcePath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
 
 
@@ -32,7 +32,6 @@ namespace DatabaseToolVersion2
                     }
                 }
             }
-
         }
 
         private void DoClickSave(object? sender, EventArgs e)
@@ -56,18 +55,19 @@ namespace DatabaseToolVersion2
                 }
                 File.WriteAllLines(sourcePath, updatedLines);
 
-                File.Copy(sourcePath, destinationPath, overwrite: true);
+                //File.Copy(sourcePath, destinationPath, overwrite: true);
 
-                _envVariable["DB_HOST"] = "";
-                _envVariable["DB_DATABASE"] = "";
-                _envVariable["DB_USERNAME"] = "";
-                _envVariable["DB_PASSWORD"] = "";
-                updatedLines.Clear();
-                foreach (var kvp in _envVariable)
-                {
-                    updatedLines.Add($"{kvp.Key}={kvp.Value}");
-                }
-                File.WriteAllLines(sourcePath, updatedLines);
+                //_envVariable["DB_HOST"] = "";
+                //_envVariable["DB_DATABASE"] = "";
+                //_envVariable["DB_USERNAME"] = "";
+                //_envVariable["DB_PASSWORD"] = "";
+
+                //updatedLines.Clear();
+                //foreach (var kvp in _envVariable)
+                //{
+                //    updatedLines.Add($"{kvp.Key}={kvp.Value}");
+                //}
+                //File.WriteAllLines(sourcePath, updatedLines);
 
                 MessageBox.Show("Success!!!");
                 this.Dispose();

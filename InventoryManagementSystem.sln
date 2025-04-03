@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BayonFramework", "BayonFram
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseToolVersion2", "DatabaseToolVersion2\DatabaseToolVersion2.csproj", "{CCC64E62-4D65-4856-8C56-6BDDA83C9864}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "IMS-M3G25-V2-Setup", "IMS-M3G25-V2-Setup\IMS-M3G25-V2-Setup.vdproj", "{073A69C4-ADD8-4EB1-835A-EE7A8D39D07F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,8 @@ Global
 		{CCC64E62-4D65-4856-8C56-6BDDA83C9864}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCC64E62-4D65-4856-8C56-6BDDA83C9864}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCC64E62-4D65-4856-8C56-6BDDA83C9864}.Release|Any CPU.Build.0 = Release|Any CPU
+		{073A69C4-ADD8-4EB1-835A-EE7A8D39D07F}.Debug|Any CPU.ActiveCfg = Debug
+		{073A69C4-ADD8-4EB1-835A-EE7A8D39D07F}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
