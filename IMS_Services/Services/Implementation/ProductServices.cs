@@ -4,6 +4,8 @@ using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using BayonFramework.Database.Builder.Core;
+using BayonFramework.Database.Builder.Query.Condition.Enum;
 
 namespace IMS_Services.Services.Implementation;
 
@@ -13,22 +15,23 @@ public class ProductServices : ICRUDServices<Product, int>
     private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
     public static int Add(Product product)
     {
-        string query = @"
-        INSERT INTO tbProduct VALUES 
-        (@name, @barcode, @salePrice, @uom, @ts, @cateID);";
+        SqlQuery query = new QueryBuilder("tbProduct").Insert(
+                new Dictionary<string, object>
+                    {
+                        {"ProductName", product.Name! },
+                        {"Barcode", product.Barcode! },
+                        {"SalePrice", product.SalePrice },
+                        {"UOM", product.UOM },
+                        {"TotalStock", product.TotalStock },
+                        {"CategoryID", product.CategoryID },
+                    }
+                ).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
-        {
-            cmd.Parameters.AddWithValue("@name", product.Name);
-            cmd.Parameters.AddWithValue("@barcode", product.Barcode);
-            cmd.Parameters.AddWithValue("@salePrice", product.SalePrice);
-            cmd.Parameters.AddWithValue("@uom", product.UOM);
-            cmd.Parameters.AddWithValue("@ts", product.TotalStock);
-            cmd.Parameters.AddWithValue("@cateID", product.CategoryID);
-;
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
+        { 
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected;
             }
             catch (Exception ex)
@@ -41,14 +44,13 @@ public class ProductServices : ICRUDServices<Product, int>
 
     public static bool Delete(int id)
     {
-        string query = "DELETE FROM tbProduct WHERE ProductID = @id;";
+        SqlQuery query = new QueryBuilder(Product.TableName).Delete().Where("ProductID", ComparisonCondition.Equal, id).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@id", id);
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
@@ -60,14 +62,14 @@ public class ProductServices : ICRUDServices<Product, int>
     
     public static IEnumerable<Product> GetAll()
     {
-        string query = "SELECT * FROM tbProduct";
+        SqlQuery query = new QueryBuilder(Product.TableName).Select().Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -89,18 +91,21 @@ public class ProductServices : ICRUDServices<Product, int>
 
     public static Product GetById(int id)
     {
-        string query = "SELECT * FROM tbProduct WHERE ProductID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder(Product.TableName)
+                .Select()
+                .Where("ProductID", ComparisonCondition.Equal, id)
+                .Build();
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
 
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error in getting staff with ID, {id} > {ex.Message}");
+                throw new Exception($"Error in getting product with ID, {id} > {ex.Message}");
             }
 
             Product? result = null;
@@ -120,36 +125,18 @@ public class ProductServices : ICRUDServices<Product, int>
 
     public static IEnumerable<Product> GetLowStockProducts()
     {
-        string query = "SELECT * FROM tbProduct WHERE TotalStock < 6;";
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder(Product.TableName).Select().Where("TotalStock", ComparisonCondition.LessThan, 6).Build();
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error in getting products with low stock > {ex.Message}");
             }
-
-            //Product? result = null;
-            //if (reader != null && reader.HasRows == true)
-            //{
-            //    if (reader.Read() == true)
-            //    {
-            //        result = reader.ToProduct();
-            //        result = new Product()
-            //        {
-            //            ID = reader.GetInt32("ProductID"),
-            //            Name = reader.GetString("ProductName"),
-            //            TotalStock = reader.GetInt16("TotalStock"),
-            //        };
-            //    }
-            //}
-
-            //reader?.Close();
-            //return result;
 
             if (reader != null && reader.HasRows == true)
             {
@@ -170,14 +157,17 @@ public class ProductServices : ICRUDServices<Product, int>
 
     public static IEnumerable<Product> GetByName(string name)
     {
-        string query = "SELECT * FROM tbProduct WHERE ProductName LIKE '%" + name + "%'";
+        SqlQuery query = new QueryBuilder(Product.TableName)
+               .Select()
+               .Where("ProductName", ComparisonCondition.Like, $"%{name}%")
+               .Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -198,37 +188,29 @@ public class ProductServices : ICRUDServices<Product, int>
 
     public static bool Update(Product product)
     {
-        string query = @"
-        UPDATE tbProduct
-        SET 
-            ProductName = @name,
-            Barcode = @barcode,
-            SalePrice = @salePrice,
-            UOM = @uom,
-            TotalStock = @ts,
-            CategoryID = @cateID
-        WHERE 
-            ProductID = @id;";
+        SqlQuery query = new QueryBuilder(Product.TableName)
+           .Update(new Dictionary<string, object>
+               {
+                    {"ProductName", product.Name! },
+                    {"Barcode", product.Barcode! },
+                    {"SalePrice", product.SalePrice },
+                    {"UOM", product.UOM },
+                    {"TotalStock", product.TotalStock },
+                    {"CategoryID", product.CategoryID },
+               }
+           ).Where("ProductID", ComparisonCondition.Equal, product.ID).Build();
 
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@name", product.Name);
-            cmd.Parameters.AddWithValue("@barcode", product.Barcode);
-            cmd.Parameters.AddWithValue("@salePrice", product.SalePrice);
-            cmd.Parameters.AddWithValue("@uom", product.UOM);
-            cmd.Parameters.AddWithValue("@ts", product.TotalStock);
-            cmd.Parameters.AddWithValue("@cateID", product.CategoryID);
-            cmd.Parameters.AddWithValue("@id", product.ID);
-
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed in updating new Product > {ex.Message}");
+                throw new Exception($"Failed in updating Product > {ex.Message}");
 
             }
 

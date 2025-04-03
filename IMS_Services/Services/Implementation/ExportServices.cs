@@ -4,6 +4,7 @@ using IMS_Services.Entities;
 using System.Data;
 using BayonFramework.Database.Driver;
 using BayonFramework.Database;
+using BayonFramework.Database.Builder.Core;
 
 namespace IMS_Services.Services.Implementation;
 
@@ -15,19 +16,20 @@ public class ExportServices : ICRUDServices<Export, int>
 
     public static int Add(Export entity)
     {
-        string query = @"
-        INSERT INTO tbExport VALUES 
-        (@d, @ti, @tc, @h);";
-
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder("tbExport").Insert(
+                new Dictionary<string, object>
+                    {
+                        {"ExportDate", entity.ExportDate },
+                        {"TotalItems", entity.TotalItem },
+                        {"TotalCost", entity.TotalCost },
+                        {"HandledBy", entity.HandledBy },
+                    }
+                ).Build();
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@d", entity.ExportDate);
-            cmd.Parameters.AddWithValue("@ti", entity.TotalItem);
-            cmd.Parameters.AddWithValue("@tc", entity.TotalCost);
-            cmd.Parameters.AddWithValue("@h", entity.HandledBy);
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected;
             }
             catch (Exception ex)

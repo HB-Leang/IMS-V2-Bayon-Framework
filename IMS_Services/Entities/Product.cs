@@ -10,6 +10,7 @@ namespace IMS_Services.Entities;
 
 public class Product 
 {
+    public static string TableName = "tbProduct";
     public int ID { get; set; }
     public string? Name { get; set; }
     public string? Barcode {  get; set; }

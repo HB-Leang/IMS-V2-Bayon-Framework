@@ -4,7 +4,6 @@ namespace IMS_Services.States.Implementation;
 
 public class ActiveState : IInventoryState
 {
-    public bool CanBeExported() => true;
     public string GetStatus() => "Active";
 
     public void UpdateState(Inventory inventory)

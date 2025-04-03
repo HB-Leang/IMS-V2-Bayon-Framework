@@ -4,7 +4,6 @@ namespace IMS_Services.States.Implementation;
 
 public class ExpiredState : IInventoryState
 {
-    public bool CanBeExported() => false;
     public string GetStatus() => "Expired";
 
     public void UpdateState(Inventory inventory)

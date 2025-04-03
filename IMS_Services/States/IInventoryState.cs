@@ -10,6 +10,5 @@ namespace IMS_Services.States;
 public interface IInventoryState
 {
     string GetStatus();
-    bool CanBeExported();
     void UpdateState(Inventory inventory);
 }

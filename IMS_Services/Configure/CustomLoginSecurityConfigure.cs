@@ -15,7 +15,7 @@ namespace IMS_Services.Configure
         {
             return securityChain.PasswordFilter(config => config.MinLength(6).Number())
                 .Encrypt()
-                .AuthFilter(config => config.AuthCheckLocked().AuthAttempt(3).Authenticated())
+                .AuthFilter(config => config.AuthCheckLocked().AuthAttempt(2).Authenticated())
                 .Build();
         }
     }

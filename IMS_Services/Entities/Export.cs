@@ -3,6 +3,7 @@ namespace IMS_Services.Entities;
 
 public class Export
 {
+    public static string TableName = "tbExport";
     public int ID { get; set; }
     public DateTime ExportDate { get; set; }
     public short TotalItem { get; set; }

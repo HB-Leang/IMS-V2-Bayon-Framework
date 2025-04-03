@@ -4,7 +4,6 @@ namespace IMS_Services.States.Implementation;
 
 public class DepletedState : IInventoryState
 {
-    public bool CanBeExported() => false;
     public string GetStatus() => "Depleted";
 
     public void UpdateState(Inventory inventory)

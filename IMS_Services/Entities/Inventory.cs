@@ -20,7 +20,6 @@ public class Inventory
     {
         State?.UpdateState(this);
     }
-    public bool CanExport() => State?.CanBeExported() ?? false;
     public byte GetStatusValue()
     {
         return State switch

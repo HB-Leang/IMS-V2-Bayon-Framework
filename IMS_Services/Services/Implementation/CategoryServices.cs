@@ -5,6 +5,7 @@ using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using BayonFramework.Database.Builder.Core;
+using BayonFramework.Database.Builder.Query.Condition.Enum;
 
 namespace IMS_Services.Services.Implementation;
 
@@ -15,31 +16,21 @@ public class CategoryServices : ICRUDServices<Category, byte>
 
     public static byte Add(Category entity)
     {
-        //string query = @"
-        //INSERT INTO tbCategory VALUES 
-        //(@n, @d);";
         SqlQuery query = new QueryBuilder("tbCategory").Insert(
                 new Dictionary<string, object>
                     {
-                        {"CategoryName", entity.Name },
-                        {"CategoryDesc", entity.Description },
-                      
+                        {"CategoryName", entity.Name! },
+                        {"CategoryDesc", entity.Description! },
                     }
                 ).Build();
 
         using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            foreach (var param in query.Parameters)
-            {
-                cmd.Parameters.AddWithValue($"{param.Key}", param.Value);
-            }
-
-            //cmd.Parameters.AddWithValue("@n", entity.Name);
-            //cmd.Parameters.AddWithValue("@d", entity.Description);
+           
 
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return (byte)effected;
             }
             catch (Exception ex)
@@ -52,19 +43,19 @@ public class CategoryServices : ICRUDServices<Category, byte>
 
     public static bool Delete(byte id)
     {
-        string query = "DELETE FROM tbCategory WHERE CategoryID = @id;";
+        SqlQuery query = new QueryBuilder(Category.TableName).Delete().Where("CategoryID", ComparisonCondition.Equal, id).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@id", id);
+            
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed in deleting new Category > {ex.Message}");
+                throw new Exception($"Failed in deleting Category > {ex.Message}");
 
             }
         }
@@ -72,14 +63,14 @@ public class CategoryServices : ICRUDServices<Category, byte>
 
     public static IEnumerable<Category> GetAll()
     {
-        string query = "SELECT * FROM tbCategory;";
+        SqlQuery query = new QueryBuilder(Category.TableName).Select().Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -101,13 +92,16 @@ public class CategoryServices : ICRUDServices<Category, byte>
 
     public static Category GetById(byte id)
     {
-        string query = "SELECT * FROM tbCategory WHERE CategoryID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder(Category.TableName)
+                .Select()
+                .Where("CategoryID", ComparisonCondition.Equal, id)
+                .Build();
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -131,14 +125,17 @@ public class CategoryServices : ICRUDServices<Category, byte>
 
     public static IEnumerable<Category> GetByName(string name)
     {
-        string query = "SELECT * FROM tbCategory WHERE CategoryName LIKE '%" + name + "%'";
+        SqlQuery query = new QueryBuilder(User.TableName)
+                .Select()
+                .Where("CategoryName", ComparisonCondition.Like, $"%{name}%")
+                .Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -159,32 +156,27 @@ public class CategoryServices : ICRUDServices<Category, byte>
 
     public static bool Update(Category entity)
     {
-        string query = @"
-        UPDATE tbCategory
-        SET 
-            CategoryName = @n,
-            CategoryDesc = @d
-           
-        WHERE 
-            CategoryID = @id;";
 
+        SqlQuery query = new QueryBuilder(Category.TableName)
+            .Update(new Dictionary<string, object>
+                {
+                    {"CategoryName", entity.Name! },
+                    {"CategoryDesc", entity.Description }
+                }
+            ).Where("CategoryID", ComparisonCondition.Equal, entity.ID).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@n", entity.Name);
-            cmd.Parameters.AddWithValue("@d", entity.Description);
-           
-
-            cmd.Parameters.AddWithValue("@id", entity.ID);
+            
 
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed in updating new Category > {ex.Message}");
+                throw new Exception($"Failed in updating Category > {ex.Message}");
 
             }
         }
