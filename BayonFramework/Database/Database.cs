@@ -1,18 +1,18 @@
-﻿using BayonFramework.Configuration;
-using BayonFramework.Database.Driver;
+﻿using BayonFramework.Database.Driver;
 using BayonFramework.Database.Factory;
-using BayonFramework.Database.Factory.Implementation;
 
 namespace BayonFramework.Database;
 
 public class Database
 {
     private static readonly Database? _instance = null;
-    private AbstractDatabaseFactory _factory;
+    private IDatabase _database;
+
     private Database()
     {
-        _factory = new DatabaseFactory();
-    } 
+        _database = new DatabaseFactory().CreateDatabase();
+    }
+
     public static Database Instance
     {
         get
@@ -27,11 +27,6 @@ public class Database
 
     public IDatabase GetDatabase()
     {
-        string? dbConnection = DatabaseEnviroment.DB_CONNECTION ?? throw new Exception("Database can't instanciation.DB_Connection must be not null");
-        if (dbConnection.Equals("mssql"))
-        {
-            return _factory.CreateMssql();
-        }
-        return _factory.CreatePgsql();
+        return _database;
     }
 }
