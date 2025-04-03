@@ -9,6 +9,8 @@ using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using BayonFramework.Database.Builder.Core;
+using BayonFramework.Database.Builder.Query.Condition.Enum;
 
 
 
@@ -80,16 +82,17 @@ public class InventoryServices
     public static void RetrieveData(DataTable table)
     {
         table.Rows.Clear();
-        string read_query = "SELECT * FROM tbInventory";
-        SqlDataAdapter da = new SqlDataAdapter(read_query, connection);
+     
+        SqlQuery query = new QueryBuilder("tbInventory").Select().Build();
+        SqlDataAdapter da = new SqlDataAdapter(query.Query, connection);
         da.Fill(table);
     }
 
     public static IEnumerable<Inventory> GetAll()
     {
-        string query = "SELECT * FROM tbInventory";
+        SqlQuery query = new QueryBuilder("tbInventory").Select().Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -115,14 +118,17 @@ public class InventoryServices
 
     public static Inventory GetById(int id)
     {
-        string query = "SELECT * FROM tbInventory WHERE InvID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder("tbInventory")
+                .Select()
+                .Where("InvID", ComparisonCondition.Equal, id)
+                .Build();
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
 
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -146,14 +152,13 @@ public class InventoryServices
 
     public static bool Delete(int id)
     {
-        string query = "DELETE FROM tbInventory WHERE InvID = @id;";
+        SqlQuery query = new QueryBuilder("tbInventory").Delete().Where("InvID", ComparisonCondition.Equal, id).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@id", id);
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
@@ -165,41 +170,28 @@ public class InventoryServices
 
     public static bool Update(Inventory entity)
     {
-        string query = @"
-        UPDATE tbInventory
-        SET 
-            UnitCost = @uc,
-            ExpirationDate = @ed,
-            CurrentStock = @cs,
-            InitialQty = @iq,
-            Note = @n,
-            SubTotal = @st,
-            LastUpdate = @lu,
-            ProductID = @pid,
-            ImportID = @im,
-            Status = @status
-        WHERE 
-            InvID = @id;";
+        SqlQuery query = new QueryBuilder("tbInventory")
+          .Update(new Dictionary<string, object>
+              {
+                    {"UnitCost", entity.UnitCost },
+                    {"ExpirationDate", entity.ExpirationDate },
+                    {"CurrentStock", entity.CurrentStock },
+                    {"InitialQty", entity.InitialQty },
+                    {"Note", entity.Note! },
+                    {"SubTotal", entity.SubTotal },
+                    {"LastUpdate", entity.LastUpdate },
+                    {"ProductID", entity.ProductID },
+                    {"ImportID", entity.ImportID },
+                    {"Status", entity.GetStatusValue() },
+              }
+          ).Where("InvID", ComparisonCondition.Equal, entity.ID).Build();
 
-
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@uc", entity.UnitCost);
-            cmd.Parameters.AddWithValue("@ed", entity.ExpirationDate);
-            cmd.Parameters.AddWithValue("@cs", entity.CurrentStock);
-            cmd.Parameters.AddWithValue("@iq", entity.InitialQty);
-            cmd.Parameters.AddWithValue("@n", entity.Note);
-            cmd.Parameters.AddWithValue("@st", entity.SubTotal);
-            cmd.Parameters.AddWithValue("@lu", entity.LastUpdate);
-            cmd.Parameters.AddWithValue("@pid", entity.ProductID);
-            cmd.Parameters.AddWithValue("@im", entity.ImportID);
-            cmd.Parameters.AddWithValue("@status", entity.GetStatusValue());
-
-            cmd.Parameters.AddWithValue("@id", entity.ID);
 
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)

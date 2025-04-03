@@ -4,6 +4,7 @@ namespace IMS_Services.Entities;
 
 public class Import
 {
+    public static string TableName = "tbImport";
     public int ID { get; set; }
     public DateTime ImportDate { get; set; }
     public decimal TotalCost { get; set; }

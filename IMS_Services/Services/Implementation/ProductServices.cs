@@ -69,7 +69,7 @@ public class ProductServices : ICRUDServices<Product, int>
             SqlDataReader? reader = null;
             try
             {
-                reader = query.GetSqlCommand(cmd).ExecuteReader();
+                reader = cmd.ExecuteReader();
             }
             catch (Exception ex)
             {

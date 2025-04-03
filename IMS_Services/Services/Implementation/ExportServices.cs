@@ -5,6 +5,7 @@ using System.Data;
 using BayonFramework.Database.Driver;
 using BayonFramework.Database;
 using BayonFramework.Database.Builder.Core;
+using BayonFramework.Database.Builder.Query.Condition.Enum;
 
 namespace IMS_Services.Services.Implementation;
 
@@ -16,7 +17,7 @@ public class ExportServices : ICRUDServices<Export, int>
 
     public static int Add(Export entity)
     {
-        SqlQuery query = new QueryBuilder("tbExport").Insert(
+        SqlQuery query = new QueryBuilder(Export.TableName).Insert(
                 new Dictionary<string, object>
                     {
                         {"ExportDate", entity.ExportDate },
@@ -42,14 +43,13 @@ public class ExportServices : ICRUDServices<Export, int>
 
     public static bool Delete(int id)
     {
-        string query = "DELETE FROM tbExport WHERE ExportID = @id;";
+        SqlQuery query = new QueryBuilder(Export.TableName).Delete().Where("ExportID", ComparisonCondition.Equal, id).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@id", id);
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
@@ -61,9 +61,9 @@ public class ExportServices : ICRUDServices<Export, int>
 
     public static IEnumerable<Export> GetAll()
     {
-        string query = "SELECT * FROM tbExport;";
+        SqlQuery query = new QueryBuilder(Export.TableName).Select().Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -89,8 +89,11 @@ public class ExportServices : ICRUDServices<Export, int>
 
     public static Export GetById(int id)
     {
-        string query = "SELECT * FROM tbExport WHERE ExportID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder(Export.TableName)
+                .Select()
+                .Where("ExportID", ComparisonCondition.Equal, id)
+                .Build();
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -123,32 +126,27 @@ public class ExportServices : ICRUDServices<Export, int>
 
     public static bool Update(Export entity)
     {
-        string query = @"
-        UPDATE tbExport
-        SET 
-            ExportDate = @d,
-            TotalItems = @ti,
-            TotalCost = @tc,
-            HandledBy = @h
-        WHERE 
-            ExportID = @id;";
+        SqlQuery query = new QueryBuilder(Export.TableName)
+           .Update(new Dictionary<string, object>
+               {
+                    {"ExportDate", entity.ExportDate },
+                    {"TotalItems", entity.TotalItem },
+                    {"TotalCost", entity.TotalCost },
+                    {"HandledBy", entity.HandledBy },
+               }
+           ).Where("ExportID", ComparisonCondition.Equal, entity.ID).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@d", entity.ExportDate);
-            cmd.Parameters.AddWithValue("@ti", entity.TotalItem);
-            cmd.Parameters.AddWithValue("@tc", entity.TotalCost);
-            cmd.Parameters.AddWithValue("@h", entity.HandledBy);
-            cmd.Parameters.AddWithValue("@id", entity.ID);
-
+            
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed in updating new Export > {ex.Message}");
+                throw new Exception($"Failed in updating Export > {ex.Message}");
 
             }
         }

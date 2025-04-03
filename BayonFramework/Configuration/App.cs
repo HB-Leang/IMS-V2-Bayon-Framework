@@ -1,4 +1,4 @@
-﻿namespace BayonFramework.Configure;
+﻿namespace BayonFramework.Configuration;
 
 public class App
 {

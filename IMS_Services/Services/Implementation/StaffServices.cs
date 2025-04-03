@@ -4,6 +4,8 @@ using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using BayonFramework.Database.Builder.Core;
+using BayonFramework.Database.Builder.Query.Condition.Enum;
 
 
 namespace IMS_Services.Services.Implementation;
@@ -17,26 +19,27 @@ public class StaffServices : ICRUDServices<Staff, short>
 
     public static short Add(Staff staff)
     {
-        string query = @"
-        INSERT INTO tbStaff VALUES 
-        (@StaffName, @Gender, @BirthDate, @StaffPosition, @Address, @WorkNumber, @PersonalNumber, @HiredDate, @Salary, @StoppedWork);
-        ";
+        SqlQuery query = new QueryBuilder(Staff.TableName).Insert(
+               new Dictionary<string, object>
+                   {
+                        {"StaffName", staff.StaffName! },
+                        {"Gender", staff.Gender },
+                        {"BirthDate", staff.BirthDate },
+                        {"StaffPosition", staff.StaffPosition! },
+                        {"Address", staff.Address! },
+                        {"WorkNumber", staff.WorkNumber! },
+                        {"PersonalNumber", staff.PersonalNumber! },
+                        {"HiredDate", staff.HiredDate },
+                        {"Salary", staff.Salary },
+                        {"StoppedWork", staff.StoppedWork },
+                   }
+               ).Build();
 
-            using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
             {
-                cmd.Parameters.AddWithValue("@StaffName", staff.StaffName);
-                cmd.Parameters.AddWithValue("@Gender", staff.Gender);
-                cmd.Parameters.AddWithValue("@BirthDate", staff.BirthDate);
-                cmd.Parameters.AddWithValue("@StaffPosition", staff.StaffPosition);
-                cmd.Parameters.AddWithValue("@Address", staff.Address);
-                cmd.Parameters.AddWithValue("@WorkNumber", staff.WorkNumber);
-                cmd.Parameters.AddWithValue("@PersonalNumber", staff.PersonalNumber);
-                cmd.Parameters.AddWithValue("@HiredDate", staff.HiredDate);
-                cmd.Parameters.AddWithValue("@Salary", staff.Salary);
-                cmd.Parameters.AddWithValue("@StoppedWork", staff.StoppedWork);
                 try
                 {
-                    int effected = cmd.ExecuteNonQuery();
+                    int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                     return (short)effected;
                 }
                 catch (Exception ex)
@@ -51,20 +54,18 @@ public class StaffServices : ICRUDServices<Staff, short>
 
     public static bool Delete(short id)
     {
-        string query = "DELETE FROM tbStaff WHERE StaffID = @id";
-        
-            using (SqlCommand cmd = new SqlCommand(query, connection))
-            {
-                cmd.Parameters.AddWithValue("@id", id);
+        SqlQuery query = new QueryBuilder(Staff.TableName).Delete().Where("StaffID", ComparisonCondition.Equal, id).Build();
 
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
+            {
                 try
                 {
-                    int effected = cmd.ExecuteNonQuery();
+                    int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                     return effected > 0;
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Failed in deleting new Staff > {ex.Message}");
+                    throw new Exception($"Failed in deleting Staff > {ex.Message}");
 
                 }
             }
@@ -73,9 +74,9 @@ public class StaffServices : ICRUDServices<Staff, short>
 
     public static IEnumerable<Staff> GetAll()
     {
-        string query = "SELECT * FROM tbStaff;";
-        
-            using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder(Staff.TableName).Select().Build();
+
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
             {
                 SqlDataReader? reader = null;
                 try
@@ -102,14 +103,17 @@ public class StaffServices : ICRUDServices<Staff, short>
 
     public static Staff GetById(short id)
     {
-        string query = "SELECT * FROM tbStaff WHERE StaffID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder(Staff.TableName)
+                .Select()
+                .Where("StaffID", ComparisonCondition.Equal, id)
+                .Build();
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
 
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -133,14 +137,17 @@ public class StaffServices : ICRUDServices<Staff, short>
 
     public static IEnumerable<Staff> GetByName(string name)
     {
-        string query = "SELECT * FROM tbStaff WHERE StaffName LIKE '%" + name + "%'";
-        
-            using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder(Staff.TableName)
+               .Select()
+               .Where("StaffName", ComparisonCondition.Like, $"%{name}%")
+               .Build();
+
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
             {
                 SqlDataReader? reader = null;
                 try
                 {
-                    reader = cmd.ExecuteReader();
+                    reader = query.GetSqlCommand(cmd).ExecuteReader();
                 }
                 catch (Exception ex)
                 {
@@ -161,45 +168,34 @@ public class StaffServices : ICRUDServices<Staff, short>
 
     public static bool Update(Staff staff)
     {
-        string query = @"
-        UPDATE tbStaff
-        SET 
-            StaffName = @name,
-            Gender = @g,
-            BirthDate = @bd,
-            StaffPosition = @pos,
-            Address = @add,
-            WorkNumber = @wn,
-            PersonalNumber = @pn,
-            HiredDate = @hd,
-            Salary = @sal,
-            StoppedWork = @sw
-        WHERE 
-            StaffID = @id;";
+        SqlQuery query = new QueryBuilder(Staff.TableName)
+           .Update(new Dictionary<string, object>
+               {
+                    {"StaffName", staff.StaffName! },
+                    {"Gender", staff.Gender },
+                    {"BirthDate", staff.BirthDate },
+                    {"StaffPosition", staff.StaffPosition! },
+                    {"Address", staff.Address! },
+                    {"WorkNumber", staff.WorkNumber! },
+                    {"PersonalNumber", staff.PersonalNumber! },
+                    {"HiredDate", staff.HiredDate },
+                    {"Salary", staff.Salary },
+                    {"StoppedWork", staff.StoppedWork },
+               }
+           ).Where("StaffID", ComparisonCondition.Equal, staff.StaffId).Build();
 
-        
-            using (SqlCommand cmd = new SqlCommand(query, connection))
+
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
             {
-                cmd.Parameters.AddWithValue("@name", staff.StaffName);
-                cmd.Parameters.AddWithValue("@g", staff.Gender);
-                cmd.Parameters.AddWithValue("@bd", staff.BirthDate);
-                cmd.Parameters.AddWithValue("@pos", staff.StaffPosition);
-                cmd.Parameters.AddWithValue("@add", staff.Address);
-                cmd.Parameters.AddWithValue("@wn", staff.WorkNumber);
-                cmd.Parameters.AddWithValue("@pn", staff.PersonalNumber);
-                cmd.Parameters.AddWithValue("@hd", staff.HiredDate);
-                cmd.Parameters.AddWithValue("@sal", staff.Salary);
-                cmd.Parameters.AddWithValue("@sw", staff.StoppedWork);
-                cmd.Parameters.AddWithValue("@id", staff.StaffId);
-
+           
                 try
                 {
-                    int effected = cmd.ExecuteNonQuery();
+                    int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                     return effected > 0;
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Failed in updating new Staff > {ex.Message}");
+                    throw new Exception($"Failed in updating Staff > {ex.Message}");
 
                 }
             }

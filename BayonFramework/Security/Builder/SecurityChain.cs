@@ -1,7 +1,7 @@
 ﻿using BayonFramework.Security.Authentication;
 using BayonFramework.Security.Builder.Configure;
-using BayonFramework.Security.Encrypt;
-using BayonFramework.Security.Encrypt.Enum;
+using BayonFramework.Security.Encryption;
+using BayonFramework.Security.Encryption.Enum;
 using BayonFramework.Security.PasswordFilter;
 using BayonFramework.Security.RegisterFilter;
 
@@ -13,6 +13,29 @@ namespace BayonFramework.Security.Builder
         private readonly List<ISecurityFilterChain> _filters = new List<ISecurityFilterChain>();
         internal EncryptAlgorithm _encryptAlgorithm;
         private bool _useEncryptFilter;
+
+        public ISecurityChain BasicPassword()
+        {
+            return PasswordFilter(
+                    password => password
+                        .MinLength(6)
+                        .Number()
+                        .NoSpaces()
+                    );
+        }
+
+        public ISecurityChain StrongPassword()
+        {
+            return PasswordFilter(
+                    password => password
+                            .MinLength(10)
+                            .Uppercase()
+                            .Number()
+                            .NoSpaces()
+                            .SpecialCharacters()
+                            .NoRepeat(2)
+                        );
+        }
 
         public ISecurityChain PasswordFilter(Action<PasswordBuilderConfigure> configure)
         {

@@ -4,6 +4,8 @@ using IMS_Services.Entities;
 using IMS_Services.Manager;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using BayonFramework.Database.Builder.Core;
+using BayonFramework.Database.Builder.Query.Condition.Enum;
 
 namespace IMS_Services.Services.Implementation;
 
@@ -14,22 +16,23 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
 
     public static byte Add(Supplier entity)
     {
-        string query = @"
-        INSERT INTO tbSupplier VALUES 
-        (@n, @e, @ph, @add, @pm, @pt);
-        ";
+        SqlQuery query = new QueryBuilder(Supplier.TableName).Insert(
+                new Dictionary<string, object>
+                    {
+                        {"SupplierName", entity.Name! },
+                        {"Email", entity.Email! },
+                        {"Phone", entity.Phone! },
+                        {"Address", entity.Address! },
+                        {"PaymentMethod", entity.PaymentMethod },
+                        {"PaymentTerm", entity.PaymentTerm },
+                    }
+                ).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@n", entity.Name);
-            cmd.Parameters.AddWithValue("@e", entity.Email);
-            cmd.Parameters.AddWithValue("@ph", entity.Phone);
-            cmd.Parameters.AddWithValue("@add", entity.Address);
-            cmd.Parameters.AddWithValue("@pm", entity.PaymentMethod);
-            cmd.Parameters.AddWithValue("@pt", entity.PaymentTerm);
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return (byte)effected;
             }
             catch (Exception ex)
@@ -42,19 +45,18 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
 
     public static bool Delete(byte id)
     {
-        string query = "DELETE FROM tbSupplier WHERE SupplierID = @id;";
+        SqlQuery query = new QueryBuilder(Supplier.TableName).Delete().Where("StaffID", ComparisonCondition.Equal, id).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@id", id);
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed in deleting new Staff > {ex.Message}");
+                throw new Exception($"Failed in deleting Staff > {ex.Message}");
 
             }
         }
@@ -62,14 +64,14 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
 
     public static IEnumerable<Supplier> GetAll()
     {
-        string query = "SELECT * FROM tbSupplier;";
+        SqlQuery query = new QueryBuilder(Supplier.TableName).Select().Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -91,14 +93,17 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
 
     public static Supplier GetById(byte id)
     {
-        string query = "SELECT * FROM tbSupplier WHERE SupplierID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder(Supplier.TableName)
+                .Select()
+                .Where("SupplierID", ComparisonCondition.Equal, id)
+                .Build();
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
 
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -122,14 +127,17 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
 
     public static IEnumerable<Supplier> GetByName(string name)
     {
-        string query = "SELECT * FROM tbSupplier WHERE SupplierName LIKE '%" + name + "%'";
+        SqlQuery query = new QueryBuilder(Supplier.TableName)
+               .Select()
+               .Where("SupplierName", ComparisonCondition.Like, $"%{name}%")
+               .Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
             {
-                reader = cmd.ExecuteReader();
+                reader = query.GetSqlCommand(cmd).ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -150,38 +158,29 @@ public class SupplierServices : ICRUDServices<Supplier, byte>
 
     public static bool Update(Supplier entity)
     {
-        string query = @"
-        UPDATE tbSupplier
-        SET 
-            SupplierName = @n,
-            Email = @e,
-            Address = @add,
-            Phone = @ph,
-            PaymentMethod = @pm,
-            PaymentTerm = @pt
-        WHERE 
-            SupplierID = @id;";
+        SqlQuery query = new QueryBuilder(Supplier.TableName)
+           .Update(new Dictionary<string, object>
+               {
+                    {"SupplierName", entity.Name! },
+                    {"Email", entity.Email! },
+                    {"Phone", entity.Phone! },
+                    {"Address", entity.Address! },
+                    {"PaymentMethod", entity.PaymentMethod },
+                    {"PaymentTerm", entity.PaymentTerm },
+               }
+           ).Where("SupplierID", ComparisonCondition.Equal, entity.ID).Build();
 
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@n", entity.Name);
-            cmd.Parameters.AddWithValue("@e", entity.Email);
-            cmd.Parameters.AddWithValue("@add", entity.Address);
-            cmd.Parameters.AddWithValue("@ph", entity.Phone);
-            cmd.Parameters.AddWithValue("@pm", entity.PaymentMethod);
-            cmd.Parameters.AddWithValue("@pt", entity.PaymentTerm);
-
-            cmd.Parameters.AddWithValue("@id", entity.ID);
-
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed in updating new Staff > {ex.Message}");
+                throw new Exception($"Failed in updating Staff > {ex.Message}");
 
             }
         }

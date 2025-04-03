@@ -5,6 +5,7 @@ namespace IMS_Services.Entities;
 
 public class Staff
 {
+    public static string TableName = "tbStaff";
     public short StaffId { get; set; }
     public string? StaffName { get; set; }
     public EnumGender Gender { get; set; }

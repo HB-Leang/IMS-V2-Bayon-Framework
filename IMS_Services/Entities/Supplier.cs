@@ -4,6 +4,7 @@ namespace IMS_Services.Entities;
 
 public class Supplier
 {
+    public static string TableName = "tbSupplier";
     public byte ID { get; set; }
     public string? Name { get; set; }
     public string? Email { get; set; }

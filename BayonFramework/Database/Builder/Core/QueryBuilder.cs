@@ -16,7 +16,6 @@ public class QueryBuilder : IQueryBuilder
     private readonly string _tableName;
     private readonly string[] _initialColumns;
     private bool _isWhereApplied;
-
     public QueryBuilder(string tableName, string[]? columns =null)
     {
         _tableName = string.IsNullOrWhiteSpace(tableName)? throw new ArgumentException("Table name cannot be empty", nameof(tableName)): tableName;
@@ -25,7 +24,6 @@ public class QueryBuilder : IQueryBuilder
         _query = new QueryComponent(_tableName);
         _isWhereApplied = false;
     }
-
     public SqlQuery Build()
     {
         var sb = new StringBuilder();
@@ -44,14 +42,12 @@ public class QueryBuilder : IQueryBuilder
         this.Reset();
         return sqlQuery;
     }
-
     private void Reset()
     {
         _whereConditions.Clear();
         _query = new QueryComponent(_tableName);
         _isWhereApplied = false;
     }
-
     private QueryBuilder ApplyWhere()
     {
         if (!_isWhereApplied && _whereConditions.Any())
@@ -61,7 +57,6 @@ public class QueryBuilder : IQueryBuilder
         }
         return this;
     }
-
     public QueryBuilder Where(string column, ComparisonCondition condition, object value, LogicalCondition? logical = null, object? value2 = null)
     {
         if (string.IsNullOrWhiteSpace(column))
@@ -69,7 +64,6 @@ public class QueryBuilder : IQueryBuilder
         _whereConditions.Add(new WhereCondition(column, condition, value, logical, value2));
         return this;
     }
-
     public QueryBuilder Where(Action<QueryBuilder> nestedBuilder, LogicalCondition? logical = null)
     {
         var nested = new QueryBuilder(_tableName, _initialColumns);
@@ -79,7 +73,6 @@ public class QueryBuilder : IQueryBuilder
         _whereConditions.Add(condition);
         return this;
     }
-    
     public QueryBuilder OrderBy(string columns, bool isAsc = true)
     {
         if (!_isWhereApplied && _whereConditions.Any())
@@ -88,7 +81,6 @@ public class QueryBuilder : IQueryBuilder
         _query = new OrderByDecorator(_query!, columns, isAsc);
         return this;
     }
-
     public QueryBuilder Limit(int limit)
     {
 
@@ -98,18 +90,15 @@ public class QueryBuilder : IQueryBuilder
         _query = new LimitDecorator(_query!, limit);
         return this;
     }
-
     public QueryBuilder Join(string joinType, string tableName, string condition)
     {
         _query = new JoinDecorator(_query!, joinType, tableName, condition);
         return this;
     }
-
     public ISpecialQueryBuilder Insert(Dictionary<string, object> values)
     {
         return new SpecialQueryBuilder(new InsertComponent(_tableName, values));
     }
-
     public QueryBuilder Update(Dictionary<string, object> values)
     {
         _query = new UpdateDecorator(_query!, _tableName, values);

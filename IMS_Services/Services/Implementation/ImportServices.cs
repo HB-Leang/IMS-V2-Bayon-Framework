@@ -3,6 +3,8 @@ using BayonFramework.Database;
 using IMS_Services.Entities;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using BayonFramework.Database.Builder.Core;
+using BayonFramework.Database.Builder.Query.Condition.Enum;
 
 
 namespace IMS_Services.Services.Implementation;
@@ -15,20 +17,22 @@ public class ImportServices : ICRUDServices<Import, int>
 
     public static int Add(Import entity)
     {
-        string query = @"
-        INSERT INTO tbImport VALUES 
-        (@d, @tc, @ti, @h, @s);";
+        SqlQuery query = new QueryBuilder(Import.TableName).Insert(
+                new Dictionary<string, object>
+                    {
+                        {"ImportDate", entity.ImportDate },
+                        {"TotalItem", entity.TotalItem },
+                        {"TotalCost", entity.TotalCost },
+                        {"HandledBy", entity.HandledBy },
+                        {"SupplierID", entity.SupplierID },
+                    }
+                ).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@d", entity.ImportDate);
-            cmd.Parameters.AddWithValue("@tc", entity.TotalCost);
-            cmd.Parameters.AddWithValue("@ti", entity.TotalItem);
-            cmd.Parameters.AddWithValue("@h", entity.HandledBy);
-            cmd.Parameters.AddWithValue("@s", entity.SupplierID);
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected;
             }
             catch (Exception ex)
@@ -41,28 +45,27 @@ public class ImportServices : ICRUDServices<Import, int>
 
     public static bool Delete(int id)
     {
-        string query = "DELETE FROM tbImport WHERE ImportID = @id;";
+        SqlQuery query = new QueryBuilder(Import.TableName).Delete().Where("ImportID", ComparisonCondition.Equal, id).Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@id", id);
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed in deleting product > {ex.Message}");
+                throw new Exception($"Failed in deleting import > {ex.Message}");
             }
         }
     }
 
     public static IEnumerable<Import> GetAll()
     {
-        string query = "SELECT * FROM tbImport;";
+        SqlQuery query = new QueryBuilder(Import.TableName).Select().Build();
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
             SqlDataReader? reader = null;
             try
@@ -89,8 +92,11 @@ public class ImportServices : ICRUDServices<Import, int>
 
     public static Import GetById(int id)
     {
-        string query = "SELECT * FROM tbImport WHERE ImportID = " + id;
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        SqlQuery query = new QueryBuilder(Import.TableName)
+                .Select()
+                .Where("ImportID", ComparisonCondition.Equal, id)
+                .Build();
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
 
             SqlDataReader? reader = null;
@@ -125,36 +131,29 @@ public class ImportServices : ICRUDServices<Import, int>
 
     public static bool Update(Import entity)
     {
-        string query = @"
-        UPDATE tbImport
-        SET 
-            ImportDate = @d,
-            TotalCost = @tc,
-            TotalItem = @ti,
-            HandledBy = @h,
-            SupplierID = @s
-        WHERE 
-            ImportID = @id;";
+        SqlQuery query = new QueryBuilder(Import.TableName)
+           .Update(new Dictionary<string, object>
+               {
+                    {"ImportDate", entity.ImportDate },
+                    {"TotalItem", entity.TotalItem },
+                    {"TotalCost", entity.TotalCost },
+                    {"HandledBy", entity.HandledBy },
+                    {"SupplierID", entity.SupplierID },
+               }
+           ).Where("ProductID", ComparisonCondition.Equal, entity.ID).Build();
 
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            cmd.Parameters.AddWithValue("@d", entity.ImportDate);
-            cmd.Parameters.AddWithValue("@tc", entity.TotalCost);
-            cmd.Parameters.AddWithValue("@ti", entity.TotalItem);
-            cmd.Parameters.AddWithValue("@h", entity.HandledBy);
-            cmd.Parameters.AddWithValue("@s", entity.SupplierID);
-
-            cmd.Parameters.AddWithValue("@id", entity.ID);
 
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed in updating new Import > {ex.Message}");
+                throw new Exception($"Failed in updating Import > {ex.Message}");
 
             }
 

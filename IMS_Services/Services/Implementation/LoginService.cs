@@ -3,7 +3,7 @@ using BayonFramework.Database;
 using Microsoft.Data.SqlClient;
 using IMS_Services.Entities;
 using BayonFramework.Security.Request;
-using IMS_Services.Configure;
+using IMS_Services.SecurityConfig;
 using BayonFramework.Database.Builder.Core;
 using BayonFramework.Database.Builder.Query.Condition.Enum;
 
@@ -30,7 +30,7 @@ namespace IMS_Services.Services.Implementation
                 .WithHashPassword(user.Password!)
                 .Build();
             
-            var security = new CustomLoginSecurityConfigure(auth);
+            var security = new CustomLoginSecurityConfiguration(auth);
 
             if (!security.Execute())
             {              
