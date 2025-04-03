@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace BayonFramework.Security.Encrypt.Algorithm
+namespace BayonFramework.Security.Encryption.Algorithm
 {
     public class SHA2Algorithm : IHashAlogorithm
     {

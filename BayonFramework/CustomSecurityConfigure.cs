@@ -1,11 +1,11 @@
 ﻿using BayonFramework.Security;
 using BayonFramework.Security.Builder;
-using BayonFramework.Security.Configure;
+using BayonFramework.Security.Configuration;
 using BayonFramework.Security.Request;
 
 namespace BayonFramework
 {
-    public class CustomSecurityConfigure : AbstractSecurityConfigure
+    public class CustomSecurityConfigure : AbstractSecurityConfiguration
     {
         public CustomSecurityConfigure(SecurityRequest securityRequest) : base(securityRequest)
         {

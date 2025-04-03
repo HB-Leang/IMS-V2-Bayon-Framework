@@ -1,4 +1,4 @@
-﻿using BayonFramework.Configure;
+﻿using BayonFramework.Configuration;
 using BayonFramework.Database.Builder.Core;
 using BayonFramework.Database.Builder.Query.Condition.Enum;
 using BayonFramework.Database.Driver;

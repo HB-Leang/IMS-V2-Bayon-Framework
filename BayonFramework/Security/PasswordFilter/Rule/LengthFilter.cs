@@ -5,12 +5,10 @@ namespace BayonFramework.Security.PasswordFilter.Rule
     public class LengthFilter : PasswordFilterChain
     {
         private readonly int _minLength;
-
         public LengthFilter(int minLenght)
         {
             _minLength = minLenght;
         }
-
         public override bool Handle(SecurityRequest input, out string errorMessage)
         {
             if (input is not PasswordRequest passowrdRequest)

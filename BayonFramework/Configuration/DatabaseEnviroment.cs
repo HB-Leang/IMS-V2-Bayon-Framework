@@ -1,6 +1,6 @@
 ﻿using BayonFramework.Validation;
 
-namespace BayonFramework.Configure;
+namespace BayonFramework.Configuration;
 
 public class DatabaseEnviroment
 {

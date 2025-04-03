@@ -1,18 +1,18 @@
-﻿using BayonFramework.Security.Encrypt.Algorithm;
-using BayonFramework.Security.Encrypt.Enum;
-using BayonFramework.Security.Encrypt.Factory;
+﻿using BayonFramework.Security.Encryption.Algorithm;
+using BayonFramework.Security.Encryption.Enum;
+using BayonFramework.Security.Encryption.Factory;
 using BayonFramework.Security.Request;
 
-namespace BayonFramework.Security.Encrypt
+namespace BayonFramework.Security.Encryption
 {
     public class EncryptFilterChain : ISecurityFilterChain
     {
         private ISecurityFilterChain? NextFilterChain;
         private readonly IHashAlogorithm _hashAlogorithm;
-
         public EncryptFilterChain(EncryptAlgorithm encrypt = EncryptAlgorithm.Bcrypt)
         {
-            _hashAlogorithm = new AlgorithmCreator().AlgorithmFactory(encrypt);
+            EncryptCreator creator = new AlgorithmCreator();
+            _hashAlogorithm = creator.AlgorithmFactory(encrypt);
         }
 
         public bool Handle(SecurityRequest input, out string errorMessage)

@@ -12,9 +12,9 @@ namespace BayonFramework.Security.Builder.Configure
             _securityChain = securityChain;
         }
 
-        public AuthBuilderConfigure AuthAttempt(int _maxAttempt)
+        public AuthBuilderConfigure AuthAttempt(int maxAttempt)
         {
-            _filters.Add(new AuthAttemptFiltering(_maxAttempt));
+            _filters.Add(new AuthAttemptFiltering(maxAttempt));
             return this;
         }
         

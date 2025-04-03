@@ -1,15 +1,15 @@
 ﻿using BayonFramework.Security.Builder;
 using BayonFramework.Security.Request;
 
-namespace BayonFramework.Security.Configure
+namespace BayonFramework.Security.Configuration
 {
-    public abstract class AbstractSecurityConfigure
+    public abstract class AbstractSecurityConfiguration
     {
         protected SecurityRequest _securityRequest;
         protected ISecurityChain _securityChain;
         protected string? _errorMessage;
 
-        public AbstractSecurityConfigure(SecurityRequest securityRequest) {
+        public AbstractSecurityConfiguration(SecurityRequest securityRequest) {
             _securityRequest = securityRequest;
             _securityChain = new SecurityChain();
         }

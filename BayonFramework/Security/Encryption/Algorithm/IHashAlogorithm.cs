@@ -1,4 +1,4 @@
-﻿namespace BayonFramework.Security.Encrypt.Algorithm
+﻿namespace BayonFramework.Security.Encryption.Algorithm
 {
     public interface IHashAlogorithm
     {

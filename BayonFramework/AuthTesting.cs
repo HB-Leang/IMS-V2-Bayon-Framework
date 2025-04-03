@@ -2,7 +2,7 @@
 using BayonFramework.Security;
 using BayonFramework.Security.PasswordFilter.Rule;
 using BayonFramework.Security.Builder;
-using BayonFramework.Security.Encrypt.Enum;
+using BayonFramework.Security.Encryption.Enum;
 
 namespace BayonFramework
 {

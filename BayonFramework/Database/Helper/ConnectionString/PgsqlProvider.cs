@@ -1,4 +1,4 @@
-﻿using BayonFramework.Configure;
+﻿using BayonFramework.Configuration;
 using BayonFramework.Validation;
 
 namespace BayonFramework.Database.Helper.ConnectionString;

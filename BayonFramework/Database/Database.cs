@@ -1,4 +1,4 @@
-﻿using BayonFramework.Configure;
+﻿using BayonFramework.Configuration;
 using BayonFramework.Database.Driver;
 using BayonFramework.Database.Factory;
 using BayonFramework.Database.Factory.Implementation;

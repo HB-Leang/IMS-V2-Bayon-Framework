@@ -1,18 +1,17 @@
-﻿using BayonFramework.Security.Encrypt.Algorithm;
-using BayonFramework.Security.Encrypt.Enum;
-using BayonFramework.Security.Encrypt.Factory;
+﻿using BayonFramework.Security.Encryption.Algorithm;
+using BayonFramework.Security.Encryption.Enum;
+using BayonFramework.Security.Encryption.Factory;
 using BayonFramework.Security.Request;
 
 namespace BayonFramework.Security.Authentication
 {
     public class AuthenticatedFiltering : AuthenticationFilterChain
     {
-        private EncryptAlgorithm _encryptAlgorithm;
-        private IHashAlogorithm _algorithm;
-        
+        private IHashAlogorithm _hashAlgorithm;
+
         public AuthenticatedFiltering(EncryptAlgorithm encrypt = EncryptAlgorithm.Bcrypt) {
-            _encryptAlgorithm = encrypt;
-            _algorithm = new AlgorithmCreator().AlgorithmFactory(encrypt);
+            EncryptCreator creator = new AlgorithmCreator();
+            _hashAlgorithm = creator.AlgorithmFactory(encrypt);
         }
 
         public override bool Handle(SecurityRequest input, out string errorMessage)
@@ -21,7 +20,7 @@ namespace BayonFramework.Security.Authentication
             {
                 throw new InvalidOperationException("AuthenticateFilter => Error : input is not PasswordRequest");
             }
-            if(!_algorithm.Verify(auth.Password, auth.HashPassword))
+            if(!_hashAlgorithm.Verify(auth.Password, auth.HashPassword))
             {
                 errorMessage = "Password: Wrong";
                 return false;

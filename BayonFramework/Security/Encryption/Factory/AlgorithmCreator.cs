@@ -1,8 +1,8 @@
 ﻿
-using BayonFramework.Security.Encrypt.Algorithm;
-using BayonFramework.Security.Encrypt.Enum;
+using BayonFramework.Security.Encryption.Algorithm;
+using BayonFramework.Security.Encryption.Enum;
 
-namespace BayonFramework.Security.Encrypt.Factory
+namespace BayonFramework.Security.Encryption.Factory
 {
     public class AlgorithmCreator : EncryptCreator
     {

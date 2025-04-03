@@ -1,4 +1,4 @@
-﻿namespace BayonFramework.Security.Encrypt.Enum
+﻿namespace BayonFramework.Security.Encryption.Enum
 {
     public enum EncryptAlgorithm
     {

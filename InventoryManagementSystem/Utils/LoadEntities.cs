@@ -185,9 +185,11 @@ public static class LoadEntities
             controls[0].Text = user.ID.ToString();
             controls[1].Text = user.Username;
             controls[2].Text = user.Password;
+
             Casting.CastCheckbox(controls[3]).Checked = (bool) user.IsLocked!;
             Casting.CastNumericUpDown(controls[4]).Value = (decimal) user.Attempt!;
             Casting.CastCombobox(controls[5]).SelectedValue = user.StaffID;
+        
         }
         catch (Exception ex)
         {

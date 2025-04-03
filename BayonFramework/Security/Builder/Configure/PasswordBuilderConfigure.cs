@@ -42,9 +42,9 @@ namespace BayonFramework.Security.Builder.Configure
             return this;
         }
 
-        public PasswordBuilderConfigure NoRespeat(int maxRepeat)
+        public PasswordBuilderConfigure NoRepeat(int maxRepeats)
         {
-            _filters.Add(new NoRepeatFilter(maxRepeat));
+            _filters.Add(new NoRepeatFilter(maxRepeats));
             return this;
         }
 

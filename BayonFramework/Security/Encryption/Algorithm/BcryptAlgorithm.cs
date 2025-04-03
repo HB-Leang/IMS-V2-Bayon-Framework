@@ -1,6 +1,6 @@
 ﻿using BCrypt.Net;
 
-namespace BayonFramework.Security.Encrypt.Algorithm
+namespace BayonFramework.Security.Encryption.Algorithm
 {
     public class BcryptAlgorithm : IHashAlogorithm
     {

@@ -2,9 +2,8 @@
 using BayonFramework.Database.Builder.Core;
 using BayonFramework.Database.Builder.Query.Condition.Enum;
 using BayonFramework.Database.Driver;
-using BayonFramework.Security.Configure;
 using BayonFramework.Security.Request;
-using IMS_Services.Configure;
+using IMS_Services.SecurityConfig;
 using IMS_Services.Entities;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -20,7 +19,7 @@ public class UserServices : ICRUDServices<User, short>
     {
         Auth register = new AuthRequest(entity.Username!, entity.Password!).Build();
 
-        var registerSecurity = new CustomRegisterSecurityConfigure(register);
+        var registerSecurity = new CustomRegisterSecurityConfiguration(register);
 
         if (!registerSecurity.Execute())
         {
@@ -165,7 +164,7 @@ public class UserServices : ICRUDServices<User, short>
     {
         SqlQuery query;
         Auth updateUser = new AuthRequest(entity.Username!, entity.Password!).Build();
-        var security = new CustomRegisterSecurityConfigure(updateUser);
+        var security = new CustomRegisterSecurityConfiguration(updateUser);
 
         if (!security.Execute())
         {
@@ -176,11 +175,11 @@ public class UserServices : ICRUDServices<User, short>
             query = new QueryBuilder(User.TableName)
             .Update(new Dictionary<string, object>
                 {
-                {"Username", entity.Username! },
-                {"Password", updateUser.HashPassword },
-                {"IsLocked", entity.IsLocked! },
-                {"Attempt", entity.Attempt! },
-                {"StaffID", entity.StaffID},
+                    {"Username", entity.Username! },
+                    {"Password", updateUser.HashPassword },
+                    {"IsLocked", entity.IsLocked! },
+                    {"Attempt", entity.Attempt! },
+                    {"StaffID", entity.StaffID},
                 }
             ).Where("UserID", ComparisonCondition.Equal, entity.ID).Build();
         }
