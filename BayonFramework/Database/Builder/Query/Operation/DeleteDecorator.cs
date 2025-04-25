@@ -4,7 +4,7 @@ namespace BayonFramework.Database.Builder.Query.Operation
 {
     public class DeleteDecorator : QueryDecorator
     {
-        private readonly string _tableName;
+        protected readonly string _tableName;
         public DeleteDecorator(IQuery query, string tableName) : base(query)
         {
             _tableName = tableName;

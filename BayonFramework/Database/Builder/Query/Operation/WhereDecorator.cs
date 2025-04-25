@@ -18,7 +18,6 @@ public class WhereDecorator : QueryDecorator
         if (_conditions.Count > 0)
             _queryStringBuilder.Append(" WHERE ").Append(BuildWhereClause(_conditions));
     }
-
     private string BuildWhereClause(List<WhereCondition> conditions, int paramIndex = 0)
     {
         StringBuilder sb = new StringBuilder();

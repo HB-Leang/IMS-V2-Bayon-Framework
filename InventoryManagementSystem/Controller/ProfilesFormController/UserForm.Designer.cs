@@ -32,6 +32,9 @@
             lbSearch = new Label();
             listUser = new ListBox();
             panel3 = new Panel();
+            lbAttempt = new Label();
+            numAttempt = new NumericUpDown();
+            chkLocked = new CheckBox();
             txtId = new TextBox();
             lbUserName = new Label();
             txtUserName = new TextBox();
@@ -41,8 +44,10 @@
             txtPassword = new TextBox();
             btnClear = new Button();
             panel2 = new Panel();
+            chkPassword = new CheckBox();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numAttempt).BeginInit();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
@@ -141,6 +146,10 @@
             // 
             // panel3
             // 
+            panel3.Controls.Add(chkPassword);
+            panel3.Controls.Add(lbAttempt);
+            panel3.Controls.Add(numAttempt);
+            panel3.Controls.Add(chkLocked);
             panel3.Controls.Add(txtId);
             panel3.Controls.Add(lbUserName);
             panel3.Controls.Add(userFormTitle);
@@ -154,6 +163,35 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(660, 900);
             panel3.TabIndex = 20;
+            // 
+            // lbAttempt
+            // 
+            lbAttempt.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            lbAttempt.AutoSize = true;
+            lbAttempt.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbAttempt.ForeColor = Color.Black;
+            lbAttempt.Location = new Point(118, 523);
+            lbAttempt.Name = "lbAttempt";
+            lbAttempt.Size = new Size(66, 20);
+            lbAttempt.TabIndex = 13;
+            lbAttempt.Text = "Attempt";
+            // 
+            // numAttempt
+            // 
+            numAttempt.Location = new Point(116, 546);
+            numAttempt.Name = "numAttempt";
+            numAttempt.Size = new Size(120, 23);
+            numAttempt.TabIndex = 12;
+            // 
+            // chkLocked
+            // 
+            chkLocked.AutoSize = true;
+            chkLocked.Location = new Point(555, 550);
+            chkLocked.Name = "chkLocked";
+            chkLocked.Size = new Size(64, 19);
+            chkLocked.TabIndex = 11;
+            chkLocked.Text = "Locked";
+            chkLocked.UseVisualStyleBackColor = true;
             // 
             // txtId
             // 
@@ -257,6 +295,15 @@
             panel2.Size = new Size(465, 900);
             panel2.TabIndex = 21;
             // 
+            // chkPassword
+            // 
+            chkPassword.AutoSize = true;
+            chkPassword.Location = new Point(625, 391);
+            chkPassword.Name = "chkPassword";
+            chkPassword.Size = new Size(15, 14);
+            chkPassword.TabIndex = 14;
+            chkPassword.UseVisualStyleBackColor = true;
+            // 
             // UserForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -275,6 +322,7 @@
             panel1.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numAttempt).EndInit();
             panel2.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -298,5 +346,9 @@
         private Button btnClear;
         private Panel panel2;
         private TextBox txtId;
+        private CheckBox chkLocked;
+        private NumericUpDown numAttempt;
+        private Label lbAttempt;
+        private CheckBox chkPassword;
     }
 }

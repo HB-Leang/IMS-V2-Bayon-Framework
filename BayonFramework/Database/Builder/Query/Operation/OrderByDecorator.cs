@@ -16,4 +16,5 @@ public class OrderByDecorator: QueryDecorator
     {
         _queryStringBuilder.Append($" ORDER BY {_column} {(_isAsc ? "ASC" : "DESC")}");
     }
+
 }

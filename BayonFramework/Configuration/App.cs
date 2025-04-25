@@ -1,4 +1,4 @@
-﻿namespace BayonFramework.Configure;
+﻿namespace BayonFramework.Configuration;
 
 public class App
 {
@@ -6,5 +6,4 @@ public class App
     {
         DatabaseEnviroment.LoaderConfiguration();
     }
-
 }

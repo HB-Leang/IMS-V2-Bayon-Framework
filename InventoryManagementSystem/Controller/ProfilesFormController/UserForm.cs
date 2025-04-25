@@ -12,36 +12,45 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
         public static event CountEventHandler? countEventHandler;
 
         private Control[] controls;
-        
+
+        private string _oldPassword = string.Empty;
+
         public UserForm()
         {
             InitializeComponent();
 
             LoadData();
             LoadComboBoxes.LoadHandleByCBO(cboStaff);
-            cboStaff.SelectedIndex = -1;
 
+            VisibleControl();
+
+            txtPassword.Enabled = true;
+            chkPassword.Checked = false;
+            chkLocked.Checked = false;
+            cboStaff.SelectedIndex = -1;
+            
             controls = new Control[] {
                 txtId,
                 txtUserName,
                 txtPassword,
+                chkLocked,
+                numAttempt,
                 cboStaff,
                 listUser
             };
-
 
             btnInsert.Click += DoClickInsertUser;
             btnUpdate.Click += DoClickUpdateUser;
             btnClear.Click += DoClickClearUser;
             btnDelete.Click += DoClickDeleteUser;
+            chkPassword.Click += DoClickCheckPassword;
 
             listUser.Click += DoClickListUser;
             txtSearch.TextChanged += DoSearchTextChange;
-
         }
 
-
         #region Event
+
         private void DoSearchTextChange(object? sender, EventArgs e)
         {
             var result = UserServices.GetByName(txtSearch.Text);
@@ -55,6 +64,8 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
         private void DoClickListUser(object? sender, EventArgs e)
         {
             btnInsert.Enabled = false;
+            txtPassword.Enabled = false;
+            VisibleControl(true);
             LoadEntities.LoadUserFromListStaff(controls, listUser);
         }
 
@@ -100,6 +111,7 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
                 Util.ClearControls(controls);
                 LoadData();
                 btnInsert.Enabled = true;
+                VisibleControl();
             }
             catch (Exception ex)
             {
@@ -110,6 +122,8 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
         private void DoClickClearUser(object? sender, EventArgs e)
         {
             Util.ClearControls(controls);
+            VisibleControl();
+            txtPassword.Enabled = true;
             btnInsert.Enabled = true;
         }
 
@@ -118,12 +132,12 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
             try
             {
                 if (IsUserValid())
-                {   
+                {
                     User user = CreatorEntities.CreateUser(controls);
-                   
+
                     user.ID = short.Parse(txtId.Text);
 
-                    bool effected = UserServices.Update(user);
+                    bool effected = UserServices.Update(user, chkPassword.Checked);
 
                     if (effected)
                     {
@@ -135,8 +149,8 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
                     {
                         MessageBox.Show($"Error Updating Data", "Updating", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
                     btnInsert.Enabled = true;
+                    VisibleControl();
                 }
                 else
                 {
@@ -164,7 +178,8 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
                     LoadData();
 
                     MessageBox.Show($"User Added!", "Creating", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                    VisibleControl();
+                    chkPassword.Checked = true;
                     countEventHandler!.Invoke(this);
 
                 }
@@ -179,14 +194,28 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
             }
         }
 
-
+        private void DoClickCheckPassword(object? sender, EventArgs e)
+        {
+            if (chkPassword.Checked == false)
+            {
+                txtPassword.Text = _oldPassword;
+                txtPassword.Enabled = false;
+                return;
+            }
+            txtPassword.Enabled = true;
+            _oldPassword = txtPassword.Text;
+            txtPassword.Clear();
+        }
+        
         #endregion
 
-
-
-
         #region method
-
+        private void VisibleControl(bool state = false)
+        {
+            chkPassword.Visible = state;
+            lbAttempt.Visible = state;
+            numAttempt.Visible = state;
+        }
         private void LoadData()
         {
             listUser.Items.Clear();
@@ -196,16 +225,9 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
                 listUser.Items.Add(user.ID + "." + user.Username);
             }
         }
-
         #endregion
 
-
-
-
-
-
         #region Validation
-
 
         private bool IsUserValid()
         {
@@ -214,11 +236,6 @@ namespace InventoryManagementSystem.Controller.ProfilesFormController
             return isVilid;
         }
 
-
-
-
         #endregion
-
-
     }
 }

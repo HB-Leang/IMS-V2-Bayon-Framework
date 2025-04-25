@@ -2,6 +2,8 @@
 using BayonFramework.Database.Builder.Core;
 using BayonFramework.Database.Builder.Query.Condition.Enum;
 using BayonFramework.Database.Driver;
+using BayonFramework.Security.Request;
+using IMS_Services.SecurityConfig;
 using IMS_Services.Entities;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -12,22 +14,29 @@ public class UserServices : ICRUDServices<User, short>
 {
     private static IDatabase db = Database.Instance.GetDatabase();
     private static SqlConnection connection = (SqlConnection)db.GetConnection()!;
+
     public static short Add(User entity)
     {
-        //string query = @"INSERT INTO tbUser VALUES (@un, @ps, @sid);";
+        Auth register = new AuthRequest(entity.Username!, entity.Password!).Build();
 
-        SqlQuery query = new QueryBuilder("tbUser").Insert(new Dictionary<string, object>
-            {
-                {"Username", entity.Username! },
-                {"Password", entity.Password! },
-                {"StaffID", entity.StaffID},
-            }).Build();
+        var registerSecurity = new CustomRegisterSecurityConfiguration(register);
+
+        if (!registerSecurity.Execute())
+        {
+            throw new Exception(registerSecurity.ErrorMessage);
+        }
+
+        SqlQuery query = new QueryBuilder(User.TableName).Insert(new Dictionary<string, object>
+        {
+            {"Username", entity.Username! },
+            {"Password", register.HashPassword },
+            {"IsLocked", entity.IsLocked! },
+            {"Attempt", entity.Attempt! },
+            {"StaffID", entity.StaffID},
+        }).Build();
 
         using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
-            //cmd.Parameters.AddWithValue("@un", entity.Username);
-            //cmd.Parameters.AddWithValue("@ps", entity.Password);
-            //cmd.Parameters.AddWithValue("@sid", entity.StaffID);
             try
             {
                 int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
@@ -36,22 +45,19 @@ public class UserServices : ICRUDServices<User, short>
             catch (Exception ex)
             {
                 throw new Exception($"Failed in adding new Staff > {ex.Message}");
-
             }
-
         }
     }
 
     public static bool Delete(short id)
     {
-        string query = "DELETE FROM tbUser WHERE UserID = @id";
-        using (SqlCommand cmd = new SqlCommand(query, connection))
-        {
-            cmd.Parameters.AddWithValue("@id", id);
+        SqlQuery query = new QueryBuilder(User.TableName).Delete().Where("UserID", ComparisonCondition.Equal, id).Build();
 
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
+        {
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
@@ -63,9 +69,7 @@ public class UserServices : ICRUDServices<User, short>
 
     public static IEnumerable<User> GetAll()
     {
-        //string query = "SELECT * FROM tbUser;";
-
-        SqlQuery query = new QueryBuilder("tbUser").Select().Build();
+        SqlQuery query = new QueryBuilder(User.TableName).Select().Build();
 
         using (SqlCommand cmd = new SqlCommand(query.Query, connection))
         {
@@ -94,9 +98,7 @@ public class UserServices : ICRUDServices<User, short>
 
     public static User GetById(short id)
     {
-        //string query = "SELECT * FROM tbUser WHERE UserID = " + id;
-
-        SqlQuery query = new QueryBuilder("tbUser")
+        SqlQuery query = new QueryBuilder(User.TableName)
                 .Select()
                 .Where("UserID", ComparisonCondition.Equal, id)
                 .Build();
@@ -129,9 +131,7 @@ public class UserServices : ICRUDServices<User, short>
 
     public static IEnumerable<User> GetByName(string name)
     {
-        //string query = "SELECT * FROM tbUser WHERE UserName LIKE '%" + name + "%'";
-
-        SqlQuery query = new QueryBuilder("tbUser")
+        SqlQuery query = new QueryBuilder(User.TableName)
                 .Select()
                 .Where("UserName", ComparisonCondition.Like, $"%{name}%")
                 .Build();
@@ -160,26 +160,49 @@ public class UserServices : ICRUDServices<User, short>
         }
     }
 
-    public static bool Update(User entity)
+    public static bool Update(User entity, bool state)
     {
-        string query = @"
-        UPDATE tbUser
-        SET 
-            UserName = @un,
-            Password = @pass,
-            StaffID = @sid
-        WHERE 
-            UserID = @id;";
+        SqlQuery query;
+        Auth updateUser = new AuthRequest(entity.Username!, entity.Password!).Build();
+        var security = new CustomRegisterSecurityConfiguration(updateUser);
 
-        using (SqlCommand cmd = new SqlCommand(query, connection))
+        if (!security.Execute())
         {
-            cmd.Parameters.AddWithValue("@un", entity.Username);
-            cmd.Parameters.AddWithValue("@pass", entity.Password);
-            cmd.Parameters.AddWithValue("@sid", entity.StaffID);
-            cmd.Parameters.AddWithValue("@id", entity.ID);
+            throw new Exception(security.ErrorMessage);
+        }
+
+        if (state) {
+            query = new QueryBuilder(User.TableName)
+            .Update(new Dictionary<string, object>
+                {
+                    {"Username", entity.Username! },
+                    {"Password", updateUser.HashPassword },
+                    {"IsLocked", entity.IsLocked! },
+                    {"Attempt", entity.Attempt! },
+                    {"StaffID", entity.StaffID},
+                }
+            ).Where("UserID", ComparisonCondition.Equal, entity.ID).Build();
+        }
+        else
+        {
+            query = new QueryBuilder(User.TableName)
+            .Update(new Dictionary<string, object>
+                {
+                    {"Username", entity.Username! },
+                    {"IsLocked", entity.IsLocked! },
+                    {"Attempt", entity.Attempt! },
+                    {"StaffID", entity.StaffID},
+                }
+            ).Where("UserID", ComparisonCondition.Equal, entity.ID).Build();
+        }
+
+        
+
+        using (SqlCommand cmd = new SqlCommand(query.Query, connection))
+        {
             try
             {
-                int effected = cmd.ExecuteNonQuery();
+                int effected = query.GetSqlCommand(cmd).ExecuteNonQuery();
                 return effected > 0;
             }
             catch (Exception ex)
@@ -192,8 +215,6 @@ public class UserServices : ICRUDServices<User, short>
 
     public static User GetUserByUserName(string userName)
     {
-        //string query = "SELECT * FROM tbUser WHERE Username = '" + userName + "'";
-
         SqlQuery query = new QueryBuilder("tbUser")
                 .Select()
                 .Where("Username", ComparisonCondition.Equal, userName)
@@ -224,4 +245,8 @@ public class UserServices : ICRUDServices<User, short>
         }
     }
 
+    public static bool Update(User entity)
+    {
+        throw new NotImplementedException();
+    }
 }

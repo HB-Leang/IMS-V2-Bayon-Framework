@@ -27,7 +27,6 @@ public class PgsqlDriver : IDatabase
         }
     }
 
-
     public void CloseConnection()
     {
         if (_connection != null && _connection.State == System.Data.ConnectionState.Open)

@@ -1,4 +1,4 @@
-﻿using BayonFramework.Configure;
+﻿using BayonFramework.Configuration;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,24 +16,17 @@ public class MssqlProvider : IConnectionStringProvider
         }
         return SqlServerAuth();
     }
-
     private string SqlServerAuth()
     {
         return $"data source={DatabaseEnviroment.DB_HOST}; initial catalog={DatabaseEnviroment.DB_NAME}; " +
             $"user id={DatabaseEnviroment.DB_USERNAME}; password={DatabaseEnviroment.DB_PASSWORD}; encrypt=false";
     }
-
     private string WindowsAuth()
     {
         return $"data source={DatabaseEnviroment.DB_HOST}; initial catalog={DatabaseEnviroment.DB_NAME}; trusted_connection=true; encrypt=false";
     }
-
-
     private bool CheckUserNameAndPassword(string? username, string? password)
     {
         return username.IsNullOrEmpty() && password.IsNullOrEmpty();
     }
-
-
-
 }

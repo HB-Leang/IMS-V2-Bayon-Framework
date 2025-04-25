@@ -1,4 +1,4 @@
-﻿using BayonFramework.Configure;
+﻿using BayonFramework.Configuration;
 using Microsoft.Extensions.Configuration;
 namespace IMS_Services.Utils;
 

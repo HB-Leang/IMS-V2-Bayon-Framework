@@ -9,13 +9,11 @@ namespace BayonFramework.Database.Builder.Query
         private Dictionary<string, object> _parameters = new Dictionary<string, object>();
         private readonly string _tableName;
         private readonly Dictionary<string, object> _values;
-
         public InsertComponent(string tableName, Dictionary<string, object> values)
         {
             _tableName = tableName;
             _values = values ?? new Dictionary<string, object>();
         }
-
         public void Build(StringBuilder queryStringBuilder, Dictionary<string, object> parameters)
         {
             _queryStringBuilder.Clear();
@@ -34,12 +32,10 @@ namespace BayonFramework.Database.Builder.Query
             }
             queryStringBuilder.Append(_queryStringBuilder);
         }
-
         public Dictionary<string, object> GetParameters()
         {
             return _parameters;
         }
-
         public string GetQuery()
         {
             return _queryStringBuilder.ToString();
